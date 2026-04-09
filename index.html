@@ -13,9 +13,9 @@
     --bg: #F2F2F2;
     --white: #FFFFFF;
     --text: #1A1A1A;
-    --muted: #AAAAAA;
-    --light: #CCCCCC;
-    --border: #EEEEEE;
+    --muted: #666666;
+    --light: #999999;
+    --border: #D8D8D8;
     --green: #16A34A;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
@@ -99,7 +99,7 @@
 
   .score-card { background: var(--white); border-radius: 14px; padding: 1.3rem 1.4rem; border: 1.5px solid var(--border); margin-bottom: 1.25rem; }
   .score-inner { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1rem; }
-  .score-num { font-family: 'DM Mono', monospace; font-size: 52px; font-weight: 500; color: var(--red); line-height: 1; }
+  .score-num { font-family: 'DM Mono', monospace; font-size: 36px; font-weight: 500; color: var(--red); line-height: 1; }
   .score-right { text-align: right; }
   .score-right-lbl { font-size: 11px; color: var(--muted); }
   .score-tier { font-size: 20px; font-weight: 700; color: var(--text); margin-top: 2px; }
@@ -114,12 +114,16 @@
 
   .tier-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1.25rem; }
   @media (max-width: 560px) { .tier-strip { grid-template-columns: repeat(3, 1fr); } }
-  .tier-block { border-radius: 12px; padding: 12px 8px; text-align: center; border: 1.5px solid var(--border); background: var(--white); transition: all 0.25s cubic-bezier(.4,0,.2,1); }
-  .tier-block.active { background: var(--red); border-color: var(--red); transform: translateY(-3px); box-shadow: 0 8px 22px rgba(204,0,0,0.22); }
-  .tname { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 2px; transition: color 0.2s; }
-  .trange { font-size: 9px; color: var(--light); margin-bottom: 6px; transition: color 0.2s; line-height: 1.4; }
-  .tratio { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text); transition: color 0.2s; }
-  .tier-block.active .tname, .tier-block.active .trange, .tier-block.active .tratio { color: rgba(255,255,255,0.9); }
+  .tier-block { border-radius: 12px; padding: 14px 8px; text-align: center; border: 2px solid #D0D0D0; background: var(--white); transition: all 0.25s cubic-bezier(.4,0,.2,1); }
+  .tier-block.active { background: var(--red); border-color: var(--red); transform: translateY(-3px); box-shadow: 0 8px 22px rgba(204,0,0,0.28); }
+  .tname { font-size: 11px; font-weight: 700; color: #555; margin-bottom: 4px; transition: color 0.2s; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tpercentile { font-size: 28px; font-weight: 700; color: #1A1A1A; margin-bottom: 3px; transition: color 0.2s; line-height: 1.2; }
+  .trange { font-size: 10px; color: #777; margin-bottom: 8px; transition: color 0.2s; line-height: 1.4; }
+  .tratio { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 700; color: var(--red); transition: color 0.2s; }
+  .tier-block.active .tname { color: rgba(255,255,255,0.75); }
+  .tier-block.active .tpercentile { color: #fff; }
+  .tier-block.active .trange { color: rgba(255,255,255,0.7); }
+  .tier-block.active .tratio { color: #fff; }
 
   .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 560px) { .breakdown { grid-template-columns: 1fr; } }
@@ -227,7 +231,7 @@
       <div>
         <div class="score-num" id="score-big">—</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;">raw score</div>
-        <div style="font-size:18px;font-weight:700;color:var(--red);margin-top:6px;font-family:'DM Mono',monospace;" id="score-range">—</div>
+        <div style="font-size:36px;font-weight:700;color:var(--red);margin-top:6px;font-family:'DM Mono',monospace;" id="score-range">—</div>
         <div style="font-size:11px;color:var(--muted);margin-top:2px;">translated range</div>
       </div>
       <div class="score-right">
@@ -247,27 +251,32 @@
   <div class="tier-strip">
     <div class="tier-block" id="t0">
       <div class="tname">Low</div>
-      <div class="trange">&lt; 0.285</div>
+      <div class="tpercentile">Below 40%</div>
+      <div class="trange">&lt; 28.5%</div>
       <div class="tratio">1 : 2</div>
     </div>
     <div class="tier-block" id="t1">
       <div class="tname">Low–Mid</div>
-      <div class="trange">0.285 – 0.325</div>
+      <div class="tpercentile">40% – 60%</div>
+      <div class="trange">28.5% – 32.5%</div>
       <div class="tratio">1 : 2.7</div>
     </div>
     <div class="tier-block" id="t2">
       <div class="tname">Mid</div>
-      <div class="trange">0.325 – 0.347</div>
+      <div class="tpercentile">60% – 70%</div>
+      <div class="trange">32.5% – 34.7%</div>
       <div class="tratio">1 : 3</div>
     </div>
     <div class="tier-block" id="t3">
       <div class="tname">Mid–High</div>
-      <div class="trange">0.347 – 0.373</div>
+      <div class="tpercentile">70% – 80%</div>
+      <div class="trange">34.7% – 37.3%</div>
       <div class="tratio">1 : 4</div>
     </div>
     <div class="tier-block" id="t4">
       <div class="tname">Very High</div>
-      <div class="trange">&gt; 0.373</div>
+      <div class="tpercentile">Above 80%</div>
+      <div class="trange">&gt; 37.3%</div>
       <div class="tratio">1 : 5</div>
     </div>
   </div>
@@ -475,11 +484,11 @@ function calc() {
     document.getElementById('tier-big').textContent  = activeT.label;
     document.getElementById('ratio-big').textContent = 'Vet : Support Staff = ' + activeT.ratio;
     var rangeLabel;
-    if      (score < 0.285)                        rangeLabel = 'below 0.4';
-    else if (score >= 0.285 && score < 0.325)      rangeLabel = '0.4 \u2013 0.6';
-    else if (score >= 0.325 && score < 0.347)      rangeLabel = '0.6 \u2013 0.7';
-    else if (score >= 0.347 && score < 0.373)      rangeLabel = '0.7 \u2013 0.8';
-    else                                            rangeLabel = 'above 0.8';
+    if      (score < 0.285)                        rangeLabel = 'Below 40%';
+    else if (score >= 0.285 && score < 0.325)      rangeLabel = '40% \u2013 60%';
+    else if (score >= 0.325 && score < 0.347)      rangeLabel = '60% \u2013 70%';
+    else if (score >= 0.347 && score < 0.373)      rangeLabel = '70% \u2013 80%';
+    else                                            rangeLabel = 'Above 80%';
     document.getElementById('score-range').textContent = rangeLabel;
   } else {
     document.getElementById('tier-big').textContent  = '\u2014';
