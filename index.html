@@ -5,203 +5,345 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VEG Labor Model Comparison</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    min-height: 100%;
-    background: #F2F2F2;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-  .wrap { width: 100%; max-width: 860px; }
-  .top-bar { height: 5px; background: #CC0000; border-radius: 3px; margin-bottom: 2rem; }
-  .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
-  .header h1 { font-size: 11px; font-weight: 700; color: #CC0000; letter-spacing: 3px; }
-  .reset-btn { font-size: 11px; color: #999; border: 1px solid #DDD; background: transparent; border-radius: 20px; padding: 5px 14px; cursor: pointer; }
-  .reset-btn:hover { color: #555; border-color: #BBB; }
-  .inputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 2rem; }
-  .ibox { background: #FFFFFF; border-radius: 14px; padding: 1.3rem; border: 1.5px solid #EEEEEE; transition: border-color 0.15s; }
-  .ibox:focus-within { border-color: #CC0000; }
-  .ilabel { font-size: 9px; font-weight: 700; color: #AAAAAA; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-  .ibox input { width: 100%; font-size: 44px; font-weight: 700; color: #1A1A1A; border: none; border-bottom: 2px solid #EEEEEE; background: transparent; padding: 2px 0 5px; outline: none; transition: border-color 0.15s; }
-  .ibox input:focus { border-bottom-color: #CC0000; }
-  .ibox input::placeholder { color: #DDDDDD; }
-  .ibox .hint { font-size: 10px; color: #CCCCCC; margin-top: 8px; }
-  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.5rem; }
-  .model-card { border-radius: 14px; padding: 1.5rem; }
-  .model-card.current { background: #FFFFFF; border: 1.5px solid #EEEEEE; }
-  .model-card.new-model { background: #CC0000; }
-  .model-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-  .current .model-label { color: #BBBBBB; }
-  .new-model .model-label { color: #FFAAAA; }
-  .model-name { font-size: 13px; font-weight: 700; margin-bottom: 1rem; }
-  .current .model-name { color: #888888; }
-  .new-model .model-name { color: #FFFFFF; }
-  .model-formula { font-size: 10px; font-family: 'Courier New', monospace; margin-bottom: 1.2rem; padding: 8px 10px; border-radius: 8px; line-height: 1.7; white-space: pre-line; }
-  .current .model-formula { background: #F7F7F7; color: #AAAAAA; }
-  .new-model .model-formula { background: rgba(0,0,0,0.15); color: #FFCCCC; }
-  .model-hours-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
-  .current .model-hours-label { color: #BBBBBB; }
-  .new-model .model-hours-label { color: #FFAAAA; }
-  .model-hours { font-size: 52px; font-weight: 700; line-height: 1; }
-  .current .model-hours { color: #888888; }
-  .new-model .model-hours { color: #FFFFFF; }
-  .model-unit { font-size: 12px; margin-top: 4px; }
-  .current .model-unit { color: #CCCCCC; }
-  .new-model .model-unit { color: #FFAAAA; }
-  .gap-card { background: #FFFFFF; border-radius: 14px; padding: 1.3rem 1.5rem; border: 1.5px solid #EEEEEE; margin-bottom: 1.5rem; }
-  .gap-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-  .gap-label { font-size: 9px; font-weight: 700; color: #BBBBBB; letter-spacing: 2px; text-transform: uppercase; }
-  .gap-value { font-size: 22px; font-weight: 700; }
-  .gap-value.over { color: #CC0000; }
-  .gap-value.under { color: #22C55E; }
-  .gap-value.zero { color: #CCCCCC; }
-  .gap-sub { font-size: 11px; color: #CCCCCC; margin-top: 2px; text-align: right; }
-  .bar-track { height: 10px; background: #F2F2F2; border-radius: 6px; overflow: hidden; display: flex; }
-  .bar-current { height: 100%; background: #DDDDDD; transition: width 0.4s ease; }
-  .bar-gap-pos { height: 100%; background: #CC0000; transition: width 0.4s ease; }
-  .bar-gap-neg { height: 100%; background: #22C55E; transition: width 0.4s ease; }
-  .bar-legend { display: flex; gap: 20px; margin-top: 8px; }
-  .bar-legend span { font-size: 10px; color: #BBBBBB; display: flex; align-items: center; gap: 5px; }
-  .bar-legend .dot { width: 9px; height: 9px; border-radius: 2px; }
-  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .bbox { background: #FFFFFF; border-radius: 10px; padding: .9rem 1rem; border: 1px solid #EEEEEE; }
-  .blabel { font-size: 9px; font-weight: 700; color: #CCCCCC; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
-  .brow { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-  .brow .bname { font-size: 10px; color: #AAAAAA; }
-  .brow .bval { font-size: 13px; font-weight: 700; color: #888888; }
-  .brow .bval.accent { color: #CC0000; }
-  .bottom-bar { height: 4px; background: #CC0000; border-radius: 3px; margin-top: 2rem; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%;background:#F2F2F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:2rem}
+  .wrap{width:100%;max-width:900px}
+  .top-bar{height:5px;background:#CC0000;border-radius:3px;margin-bottom:2rem}
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+  .header h1{font-size:11px;font-weight:700;color:#CC0000;letter-spacing:3px}
+  .reset-btn{font-size:11px;color:#999;border:1px solid #DDD;background:transparent;border-radius:20px;padding:5px 16px;cursor:pointer}
+  .reset-btn:hover{color:#555;border-color:#BBB}
+
+  .hosp-row{background:#fff;border-radius:14px;border:1.5px solid #EEEEEE;padding:1.2rem 1.4rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .hosp-row label{font-size:10px;font-weight:700;color:#AAAAAA;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+  .hosp-row select{flex:1;min-width:180px;font-size:14px;border:1px solid #EEEEEE;border-radius:8px;padding:6px 10px;background:#F7F7F7;color:#1A1A1A;outline:none;cursor:pointer}
+  .hosp-row select:focus{border-color:#CC0000}
+  .hosp-badges{display:flex;gap:10px;margin-left:auto}
+  .badge{font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px}
+  .badge.tier{background:#FEE2E2;color:#991B1B}
+  .badge.baseline{background:#F2F2F2;color:#555}
+
+  .inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.5rem}
+  .ibox{background:#fff;border-radius:14px;padding:1.3rem;border:1.5px solid #EEEEEE;transition:border-color .15s}
+  .ibox:focus-within{border-color:#CC0000}
+  .ilabel{font-size:9px;font-weight:700;color:#AAAAAA;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .imult{display:inline-block;font-size:11px;font-weight:700;background:#FEE2E2;color:#CC0000;border-radius:20px;padding:3px 10px;margin-bottom:12px}
+  .ibox input{width:100%;font-size:42px;font-weight:700;color:#1A1A1A;border:none;border-bottom:2px solid #EEEEEE;background:transparent;padding:2px 0 4px;outline:none;transition:border-color .15s}
+  .ibox input:focus{border-bottom-color:#CC0000}
+  .ibox input::placeholder{color:#DDDDDD}
+  .icontrib{font-size:11px;color:#CCCCCC;margin-top:8px}
+  .icontrib span{color:#999;font-weight:600}
+
+  .models{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
+  .mcard{border-radius:14px;padding:1.5rem}
+  .mcard.current{background:#fff;border:1.5px solid #EEEEEE}
+  .mcard.newm{background:#CC0000}
+  .mlabel{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+  .current .mlabel{color:#BBBBBB}
+  .newm .mlabel{color:#FFAAAA}
+  .mname{font-size:13px;font-weight:700;margin-bottom:1rem}
+  .current .mname{color:#888}
+  .newm .mname{color:#fff}
+  .mformula{font-size:10px;font-family:'Courier New',monospace;padding:8px 10px;border-radius:8px;margin-bottom:1rem;line-height:1.8;white-space:pre-line}
+  .current .mformula{background:#F7F7F7;color:#AAAAAA}
+  .newm .mformula{background:rgba(0,0,0,0.15);color:#FFCCCC}
+  .mhrs-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+  .current .mhrs-label{color:#BBBBBB}
+  .newm .mhrs-label{color:#FFAAAA}
+  .mhrs{font-size:52px;font-weight:700;line-height:1}
+  .current .mhrs{color:#888}
+  .newm .mhrs{color:#fff}
+  .munit{font-size:12px;margin-top:4px}
+  .current .munit{color:#CCCCCC}
+  .newm .munit{color:#FFAAAA}
+  .bflag{font-size:11px;margin-top:8px;font-style:italic;color:#FFBBBB;min-height:18px}
+
+  .gap-card{background:#fff;border-radius:14px;padding:1.3rem 1.5rem;border:1.5px solid #EEEEEE;margin-bottom:1.5rem}
+  .gap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+  .gap-lbl{font-size:9px;font-weight:700;color:#BBBBBB;letter-spacing:2px;text-transform:uppercase}
+  .gap-val{font-size:24px;font-weight:700}
+  .gap-val.over{color:#CC0000}
+  .gap-val.under{color:#16A34A}
+  .gap-val.zero{color:#CCCCCC}
+  .gap-sub{font-size:11px;color:#CCCCCC;margin-top:3px;text-align:right}
+  .bar-track{height:12px;background:#F2F2F2;border-radius:6px;overflow:hidden;display:flex}
+  .bar-cur{height:100%;background:#DDDDDD;transition:width .4s ease}
+  .bar-pos{height:100%;background:#CC0000;transition:width .4s ease}
+  .bar-neg{height:100%;background:#16A34A;transition:width .4s ease}
+  .legend{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap}
+  .legend span{font-size:10px;color:#BBBBBB;display:flex;align-items:center;gap:5px}
+  .dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+  .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .bbox{background:#fff;border-radius:10px;padding:.9rem 1rem;border:1px solid #EEEEEE}
+  .blabel{font-size:9px;font-weight:700;color:#CCCCCC;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+  .brow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .brow .bn{font-size:10px;color:#AAAAAA}
+  .brow .bv{font-size:13px;font-weight:700;color:#888}
+  .brow .bv.red{color:#CC0000}
+  .bottom-bar{height:4px;background:#CC0000;border-radius:3px;margin-top:2rem}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top-bar"></div>
   <div class="header">
-    <h1>LABOR MODEL COMPARISON — CURRENT VS. NEW</h1>
-    <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+    <h1>LABOR MODEL COMPARISON &mdash; CURRENT VS. NEW</h1>
+    <button class="reset-btn" onclick="resetAll()">&#8635; Reset</button>
   </div>
+
+  <div class="hosp-row">
+    <label>Hospital</label>
+    <select id="hospSel" onchange="onHospChange()">
+      <option value="">-- Select a hospital --</option>
+    </select>
+    <div class="hosp-badges">
+      <span class="badge tier" id="tierBadge">Tier &mdash;</span>
+      <span class="badge baseline" id="baselineBadge">Baseline: &mdash; hrs</span>
+    </div>
+  </div>
+
   <div class="inputs">
     <div class="ibox">
       <div class="ilabel">Outpatient cases</div>
+      <div class="imult">&times; 3.48</div>
       <input type="number" id="op" placeholder="0" min="0" oninput="calc()">
-      <div class="hint">Total outpatient visits</div>
+      <div class="icontrib">&#8594; <span id="opc">0</span> hrs</div>
     </div>
     <div class="ibox">
       <div class="ilabel">Surgery cases</div>
+      <div class="imult">&times; 13.2</div>
       <input type="number" id="sx" placeholder="0" min="0" oninput="calc()">
-      <div class="hint">Surgical procedures</div>
+      <div class="icontrib">&#8594; <span id="sxc">0</span> hrs</div>
     </div>
     <div class="ibox">
-      <div class="ilabel">Inpatient hours</div>
+      <div class="ilabel">Inpatient cases</div>
+      <div class="imult">&times; 11.4</div>
       <input type="number" id="ip" placeholder="0" min="0" oninput="calc()">
-      <div class="hint">Total inpatient hrs logged</div>
+      <div class="icontrib">&#8594; <span id="ipc">0</span> hrs</div>
     </div>
   </div>
-  <div class="comparison">
-    <div class="model-card current">
-      <div class="model-label">Current model</div>
-      <div class="model-name">Volume-based (flat rate)</div>
-      <div class="model-formula" id="cur-formula">Total Cases × 4.5</div>
-      <div class="model-hours-label">Allocated hours</div>
-      <div class="model-hours" id="cur-hours">—</div>
-      <div class="model-unit">hrs / week</div>
+
+  <div class="models">
+    <div class="mcard current">
+      <div class="mlabel">Current model</div>
+      <div class="mname">Volume-based + baseline floor</div>
+      <div class="mformula" id="cur-f">MAX( Total Cases &times; 4.5, Tier Baseline )</div>
+      <div class="mhrs-label">Allocated hours</div>
+      <div class="mhrs" id="cur-h">&mdash;</div>
+      <div class="munit">hrs / week</div>
     </div>
-    <div class="model-card new-model">
-      <div class="model-label">New model</div>
-      <div class="model-name">Acuity-weighted</div>
-      <div class="model-formula" id="new-formula">(Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient Hrs × 11.4)</div>
-      <div class="model-hours-label">Required hours</div>
-      <div class="model-hours" id="new-hours">—</div>
-      <div class="model-unit">hrs / week</div>
+    <div class="mcard newm">
+      <div class="mlabel">New model</div>
+      <div class="mname">Acuity-weighted + baseline floor</div>
+      <div class="mformula" id="new-f">MAX( (Op &times; 3.48) + (Sx &times; 13.2) + (Ip &times; 11.4), Tier Baseline )</div>
+      <div class="mhrs-label">Required hours</div>
+      <div class="mhrs" id="new-h">&mdash;</div>
+      <div class="munit">hrs / week</div>
+      <div class="bflag" id="bflag">&nbsp;</div>
     </div>
   </div>
+
   <div class="gap-card">
     <div class="gap-top">
-      <div class="gap-label">Staffing gap (new − current)</div>
+      <div class="gap-lbl">Staffing gap (new &minus; current)</div>
       <div>
-        <div class="gap-value zero" id="gap-val">—</div>
-        <div class="gap-sub" id="gap-sub">enter case numbers above</div>
+        <div class="gap-val zero" id="gval">&mdash;</div>
+        <div class="gap-sub" id="gsub">select a hospital and enter case numbers above</div>
       </div>
     </div>
     <div class="bar-track">
-      <div class="bar-current" id="bar-cur" style="width:50%"></div>
-      <div class="bar-gap-pos" id="bar-gap" style="width:0%"></div>
+      <div class="bar-cur" id="bcur" style="width:50%"></div>
+      <div class="bar-pos" id="bgap" style="width:0%"></div>
     </div>
-    <div class="bar-legend">
+    <div class="legend">
       <span><span class="dot" style="background:#DDDDDD"></span>Current model</span>
-      <span><span class="dot" style="background:#CC0000"></span>Additional hours needed</span>
-      <span><span class="dot" style="background:#22C55E"></span>Hours saved</span>
+      <span><span class="dot" style="background:#CC0000"></span>Additional hrs needed</span>
+      <span><span class="dot" style="background:#16A34A"></span>Hrs saved</span>
     </div>
   </div>
+
   <div class="breakdown">
     <div class="bbox">
       <div class="blabel">Outpatient</div>
-      <div class="brow"><span class="bname">Current</span><span class="bval" id="d-op-cur">—</span></div>
-      <div class="brow"><span class="bname">New model</span><span class="bval accent" id="d-op-new">—</span></div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="doc">&mdash;</span></div>
+      <div class="brow"><span class="bn">New (&times;3.48)</span><span class="bv red" id="don">&mdash;</span></div>
     </div>
     <div class="bbox">
       <div class="blabel">Surgery</div>
-      <div class="brow"><span class="bname">Current</span><span class="bval" id="d-sx-cur">—</span></div>
-      <div class="brow"><span class="bname">New model</span><span class="bval accent" id="d-sx-new">—</span></div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dsc">&mdash;</span></div>
+      <div class="brow"><span class="bn">New (&times;13.2)</span><span class="bv red" id="dsn">&mdash;</span></div>
     </div>
     <div class="bbox">
       <div class="blabel">Inpatient</div>
-      <div class="brow"><span class="bname">Current</span><span class="bval" id="d-ip-cur">—</span></div>
-      <div class="brow"><span class="bname">New model</span><span class="bval accent" id="d-ip-new">—</span></div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dic">&mdash;</span></div>
+      <div class="brow"><span class="bn">New (&times;11.4)</span><span class="bv red" id="din">&mdash;</span></div>
     </div>
   </div>
+
   <div class="bottom-bar"></div>
 </div>
+
 <script>
-function calc() {
-  const op = parseFloat(document.getElementById('op').value) || 0;
-  const sx = parseFloat(document.getElementById('sx').value) || 0;
-  const ip = parseFloat(document.getElementById('ip').value) || 0;
-  const totalCases = op + sx + ip;
-  const curHours = totalCases * 4.5;
-  const newHours = (op * 3.48) + (sx * 13.2) + (ip * 11.4);
-  const gap = newHours - curHours;
-  const hasInput = op > 0 || sx > 0 || ip > 0;
-  document.getElementById('cur-formula').textContent =
-    hasInput ? `(${op} + ${sx} + ${ip}) × 4.5 = ${Math.round(curHours).toLocaleString()} hrs` : 'Total Cases × 4.5';
-  document.getElementById('new-formula').textContent =
-    hasInput ? `(${op}×3.48) + (${sx}×13.2) + (${ip}×11.4)\n= ${(op*3.48).toFixed(0)} + ${(sx*13.2).toFixed(0)} + ${(ip*11.4).toFixed(0)}` : '(Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient Hrs × 11.4)';
-  document.getElementById('cur-hours').textContent = hasInput ? Math.round(curHours).toLocaleString() : '—';
-  document.getElementById('new-hours').textContent = hasInput ? Math.round(newHours).toLocaleString() : '—';
-  const gapEl = document.getElementById('gap-val');
-  const subEl = document.getElementById('gap-sub');
-  if (!hasInput) {
-    gapEl.textContent = '—'; gapEl.className = 'gap-value zero';
-    subEl.textContent = 'enter case numbers above';
-  } else if (gap > 0.5) {
-    gapEl.textContent = `+${Math.round(gap).toLocaleString()} hrs`;
-    gapEl.className = 'gap-value over';
-    subEl.textContent = `current model understaffs by ${Math.round(gap).toLocaleString()} hrs — ${((gap/curHours)*100).toFixed(1)}% shortfall`;
-  } else if (gap < -0.5) {
-    gapEl.textContent = `${Math.round(gap).toLocaleString()} hrs`;
-    gapEl.className = 'gap-value under';
-    subEl.textContent = `new model saves ${Math.round(Math.abs(gap)).toLocaleString()} hrs vs. current`;
+const HOSPITALS = [
+  {name:"Alexandria",tier:2,baseline:868},{name:"Allen",tier:1,baseline:796},
+  {name:"Alpharetta",tier:2,baseline:868},{name:"Anaheim Hills",tier:1,baseline:796},
+  {name:"Ann Arbor",tier:2,baseline:868},{name:"Arboretum",tier:1,baseline:796},
+  {name:"Asheville",tier:2,baseline:868},{name:"Beaverton",tier:2,baseline:868},
+  {name:"Boston",tier:1,baseline:796},{name:"Boulder",tier:1,baseline:796},
+  {name:"Boynton Beach",tier:2,baseline:868},{name:"Brentwood",tier:4,baseline:1396},
+  {name:"Brookfield",tier:2,baseline:868},{name:"Brookhaven",tier:1,baseline:796},
+  {name:"Buffalo Grove",tier:1,baseline:796},{name:"Cambridge",tier:2,baseline:868},
+  {name:"Camp Bowie",tier:1,baseline:796},{name:"Carle Place",tier:4,baseline:1396},
+  {name:"Cary",tier:3,baseline:1068},{name:"Cedar Park",tier:1,baseline:796},
+  {name:"Chandler",tier:5,baseline:1562},{name:"Chantilly",tier:1,baseline:796},
+  {name:"Chapel Hill",tier:1,baseline:796},{name:"Charlotte",tier:3,baseline:1068},
+  {name:"Chelsea",tier:1,baseline:796},{name:"Cincinnati",tier:2,baseline:868},
+  {name:"Clearwater",tier:1,baseline:796},{name:"Clifton",tier:6,baseline:1688},
+  {name:"Columbia MD",tier:2,baseline:868},{name:"Commack",tier:2,baseline:868},
+  {name:"Costa Mesa",tier:1,baseline:796},{name:"Dallas",tier:3,baseline:1068},
+  {name:"Denver",tier:3,baseline:1068},{name:"Denver Tech Center",tier:1,baseline:796},
+  {name:"Dublin",tier:1,baseline:796},{name:"Easton",tier:1,baseline:796},
+  {name:"Edgewater",tier:1,baseline:796},{name:"Elk Grove",tier:2,baseline:868},
+  {name:"Encinitas",tier:2,baseline:868},{name:"Falls Church",tier:3,baseline:1068},
+  {name:"Federal Way",tier:1,baseline:796},{name:"Flower Mound",tier:1,baseline:796},
+  {name:"Folsom",tier:1,baseline:796},{name:"Fort Lauderdale",tier:1,baseline:796},
+  {name:"Fort Worth",tier:3,baseline:1068},{name:"Franklin",tier:1,baseline:796},
+  {name:"Frisco",tier:1,baseline:796},{name:"Georgetown",tier:1,baseline:796},
+  {name:"Grand Prairie",tier:1,baseline:796},{name:"Greenville",tier:1,baseline:796},
+  {name:"Greenwich",tier:1,baseline:796},{name:"H Street",tier:1,baseline:796},
+  {name:"Henderson",tier:2,baseline:868},{name:"Hoboken",tier:3,baseline:1068},
+  {name:"Houston",tier:2,baseline:868},{name:"Jacksonville",tier:1,baseline:796},
+  {name:"Katy",tier:3,baseline:1068},{name:"Larkspur",tier:1,baseline:796},
+  {name:"Las Vegas",tier:1,baseline:796},{name:"Lincoln Park",tier:4,baseline:1396},
+  {name:"Littleton",tier:1,baseline:796},{name:"Lynnwood",tier:3,baseline:1068},
+  {name:"Madison",tier:2,baseline:868},{name:"Maple Grove",tier:3,baseline:1068},
+  {name:"Marietta",tier:1,baseline:796},{name:"Miami",tier:3,baseline:1068},
+  {name:"Millburn",tier:3,baseline:1068},{name:"Mount Pleasant",tier:1,baseline:796},
+  {name:"Murfreesboro",tier:1,baseline:796},{name:"Nanuet",tier:1,baseline:796},
+  {name:"Naperville",tier:1,baseline:796},{name:"Newton",tier:3,baseline:1068},
+  {name:"Nora",tier:1,baseline:796},{name:"Northern Liberties",tier:1,baseline:796},
+  {name:"Oak Brook",tier:2,baseline:868},{name:"Oceanside",tier:1,baseline:796},
+  {name:"Oklahoma City",tier:2,baseline:868},{name:"Oro Valley",tier:3,baseline:1068},
+  {name:"Otay Ranch",tier:1,baseline:796},{name:"Overland Park",tier:1,baseline:796},
+  {name:"Palm Desert",tier:3,baseline:1068},{name:"Palo Alto",tier:1,baseline:796},
+  {name:"Paramus",tier:2,baseline:868},{name:"Peabody",tier:1,baseline:796},
+  {name:"Philadelphia",tier:1,baseline:796},{name:"Phoenix",tier:4,baseline:1396},
+  {name:"Pikesville",tier:3,baseline:1068},{name:"Pinecrest",tier:1,baseline:796},
+  {name:"Pittsburgh",tier:3,baseline:1068},{name:"Pleasant Hill",tier:2,baseline:868},
+  {name:"Princeton",tier:2,baseline:868},{name:"Ralph Ave",tier:2,baseline:868},
+  {name:"Redmond",tier:2,baseline:868},{name:"San Antonio",tier:1,baseline:796},
+  {name:"San Diego",tier:2,baseline:868},{name:"San Jose",tier:2,baseline:868},
+  {name:"San Ramon",tier:6,baseline:1688},{name:"Sandy",tier:1,baseline:796},
+  {name:"Santa Clarita",tier:1,baseline:796},{name:"Santa Monica",tier:3,baseline:1068},
+  {name:"Schaumburg",tier:1,baseline:796},{name:"Seattle",tier:2,baseline:868},
+  {name:"Shrewsbury",tier:5,baseline:1562},{name:"Snellville",tier:1,baseline:796},
+  {name:"South Lamar",tier:3,baseline:1068},{name:"South Loop",tier:4,baseline:1396},
+  {name:"South Tampa",tier:1,baseline:796},{name:"St. Peters",tier:1,baseline:796},
+  {name:"St. Petersburg",tier:1,baseline:796},{name:"Sugar Land",tier:1,baseline:796},
+  {name:"Tampa",tier:4,baseline:1396},{name:"Upper East Side",tier:2,baseline:868},
+  {name:"Warwick",tier:3,baseline:1068},{name:"West Nashville",tier:1,baseline:796},
+  {name:"White Plains",tier:6,baseline:1688},{name:"Williamsburg",tier:2,baseline:868},
+  {name:"Winter Park",tier:2,baseline:868},{name:"Woodbury",tier:1,baseline:796},
+];
+
+var currentBaseline = 868;
+
+window.onload = function(){
+  var sel = document.getElementById('hospSel');
+  HOSPITALS.forEach(function(h){
+    var opt = document.createElement('option');
+    opt.value = h.name;
+    opt.textContent = h.name;
+    sel.appendChild(opt);
+  });
+};
+
+function onHospChange(){
+  var name = document.getElementById('hospSel').value;
+  var h = HOSPITALS.find(function(x){return x.name===name;});
+  if(h){
+    currentBaseline = h.baseline;
+    document.getElementById('tierBadge').textContent = 'Tier '+h.tier;
+    document.getElementById('baselineBadge').textContent = 'Baseline: '+h.baseline.toLocaleString()+' hrs';
   } else {
-    gapEl.textContent = '0 hrs'; gapEl.className = 'gap-value zero';
-    subEl.textContent = 'both models align';
+    currentBaseline = 868;
+    document.getElementById('tierBadge').textContent = 'Tier \u2014';
+    document.getElementById('baselineBadge').textContent = 'Baseline: \u2014 hrs';
   }
-  const maxHours = Math.max(curHours, newHours, 1);
-  document.getElementById('bar-cur').style.width = (curHours / maxHours * 100).toFixed(1) + '%';
-  const barGap = document.getElementById('bar-gap');
-  barGap.style.width = (Math.abs(gap) / maxHours * 100).toFixed(1) + '%';
-  barGap.className = gap >= 0 ? 'bar-gap-pos' : 'bar-gap-neg';
-  document.getElementById('d-op-cur').textContent = hasInput ? (op*4.5).toFixed(0)+' hrs' : '—';
-  document.getElementById('d-op-new').textContent = hasInput ? (op*3.48).toFixed(0)+' hrs' : '—';
-  document.getElementById('d-sx-cur').textContent = hasInput ? (sx*4.5).toFixed(0)+' hrs' : '—';
-  document.getElementById('d-sx-new').textContent = hasInput ? (sx*13.2).toFixed(0)+' hrs' : '—';
-  document.getElementById('d-ip-cur').textContent = hasInput ? (ip*4.5).toFixed(0)+' hrs' : '—';
-  document.getElementById('d-ip-new').textContent = hasInput ? (ip*11.4).toFixed(0)+' hrs' : '—';
+  calc();
 }
-function resetAll() {
-  ['op','sx','ip'].forEach(id => document.getElementById(id).value = '');
+
+function calc(){
+  var op=parseFloat(document.getElementById('op').value)||0;
+  var sx=parseFloat(document.getElementById('sx').value)||0;
+  var ip=parseFloat(document.getElementById('ip').value)||0;
+  var bl=currentBaseline;
+  var has=op>0||sx>0||ip>0;
+  var tot=op+sx+ip;
+  var curRaw=tot*4.5;
+  var cur=Math.max(curRaw,bl);
+  var a=op*3.48,b=sx*13.2,c=ip*11.4;
+  var raw=a+b+c;
+  var nw=Math.max(raw,bl);
+  var gap=nw-cur;
+  var floorOnNew=raw<bl;
+
+  document.getElementById('opc').textContent=a.toFixed(1);
+  document.getElementById('sxc').textContent=b.toFixed(1);
+  document.getElementById('ipc').textContent=c.toFixed(1);
+
+  document.getElementById('cur-f').textContent=has
+    ?'('+op+'+'+sx+'+'+ip+') \u00d7 4.5 = '+Math.round(curRaw).toLocaleString()+'\nMAX('+Math.round(curRaw).toLocaleString()+', '+bl.toLocaleString()+') = '+Math.round(cur).toLocaleString()+' hrs'
+    :'MAX( Total Cases \u00d7 4.5, Tier Baseline )';
+
+  document.getElementById('new-f').textContent=has
+    ?'('+op+'\u00d73.48)+('+sx+'\u00d713.2)+('+ip+'\u00d711.4)\n= '+raw.toFixed(0)+' raw hrs\nMAX('+raw.toFixed(0)+', '+bl.toLocaleString()+') = '+Math.round(nw).toLocaleString()+' hrs'
+    :'MAX( (Op \u00d7 3.48) + (Sx \u00d7 13.2) + (Ip \u00d7 11.4), Tier Baseline )';
+
+  document.getElementById('cur-h').textContent=has?Math.round(cur).toLocaleString():'\u2014';
+  document.getElementById('new-h').textContent=has?Math.round(nw).toLocaleString():'\u2014';
+  document.getElementById('bflag').textContent=has
+    ?(floorOnNew?'\u2b06 Baseline floor active (raw: '+raw.toFixed(0)+' hrs)':'Acuity drives staffing \u2014 above baseline')
+    :'\u00a0';
+
+  var gEl=document.getElementById('gval');
+  var gSub=document.getElementById('gsub');
+  if(!has){
+    gEl.textContent='\u2014';gEl.className='gap-val zero';
+    gSub.textContent='select a hospital and enter case numbers above';
+  } else if(gap>0.5){
+    gEl.textContent='+'+Math.round(gap).toLocaleString()+' hrs';
+    gEl.className='gap-val over';
+    gSub.textContent='current model understaffs by '+Math.round(gap).toLocaleString()+' hrs \u2014 '+((gap/cur)*100).toFixed(1)+'% shortfall';
+  } else if(gap<-0.5){
+    gEl.textContent=Math.round(gap).toLocaleString()+' hrs';
+    gEl.className='gap-val under';
+    gSub.textContent='new model saves '+Math.round(Math.abs(gap)).toLocaleString()+' hrs vs. current';
+  } else {
+    gEl.textContent='0 hrs';gEl.className='gap-val zero';gSub.textContent='both models align';
+  }
+
+  var mx=Math.max(cur,nw,1);
+  document.getElementById('bcur').style.width=(cur/mx*100).toFixed(1)+'%';
+  var bg=document.getElementById('bgap');
+  bg.style.width=(Math.abs(gap)/mx*100).toFixed(1)+'%';
+  bg.className=gap>=0?'bar-pos':'bar-neg';
+
+  document.getElementById('doc').textContent=has?(op/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs':'\u2014';
+  document.getElementById('don').textContent=has?a.toFixed(0)+' hrs':'\u2014';
+  document.getElementById('dsc').textContent=has?(sx/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs':'\u2014';
+  document.getElementById('dsn').textContent=has?b.toFixed(0)+' hrs':'\u2014';
+  document.getElementById('dic').textContent=has?(ip/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs':'\u2014';
+  document.getElementById('din').textContent=has?c.toFixed(0)+' hrs':'\u2014';
+}
+
+function resetAll(){
+  document.getElementById('hospSel').value='';
+  document.getElementById('tierBadge').textContent='Tier \u2014';
+  document.getElementById('baselineBadge').textContent='Baseline: \u2014 hrs';
+  currentBaseline=868;
+  ['op','sx','ip'].forEach(function(id){document.getElementById(id).value='';});
   calc();
 }
 </script>
