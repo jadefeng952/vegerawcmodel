@@ -3,94 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEG Labor Model Comparison</title>
+<title>VEG Acuity Staffing Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{min-height:100%;background:#F2F2F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:2rem}
-  .wrap{width:100%;max-width:900px}
-  .top-bar{height:5px;background:#CC0000;border-radius:3px;margin-bottom:2rem}
-  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
-  .header h1{font-size:11px;font-weight:700;color:#CC0000;letter-spacing:3px}
-  .reset-btn{font-size:11px;color:#999;border:1px solid #DDD;background:transparent;border-radius:20px;padding:5px 16px;cursor:pointer}
-  .reset-btn:hover{color:#555;border-color:#BBB}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --red: #CC0000;
+    --red-light: #FEE2E2;
+    --bg: #F2F2F2;
+    --white: #FFFFFF;
+    --text: #1A1A1A;
+    --muted: #AAAAAA;
+    --light: #CCCCCC;
+    --border: #EEEEEE;
+    --green: #16A34A;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
 
-  .hosp-row{background:#fff;border-radius:14px;border:1.5px solid #EEEEEE;padding:1.2rem 1.4rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .hosp-row label{font-size:10px;font-weight:700;color:#AAAAAA;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
-  .hosp-row select{flex:1;min-width:180px;font-size:14px;border:1px solid #EEEEEE;border-radius:8px;padding:6px 10px;background:#F7F7F7;color:#1A1A1A;outline:none;cursor:pointer}
-  .hosp-row select:focus{border-color:#CC0000}
-  .hosp-badges{display:flex;gap:10px;margin-left:auto}
-  .badge{font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px}
-  .badge.tier{background:#FEE2E2;color:#991B1B}
-  .badge.baseline{background:#F2F2F2;color:#555}
+  header { background: var(--red); padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+  .logo-paw { width: 36px; height: 36px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-name { color: var(--white); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .logo-sub { color: rgba(255,255,255,0.65); font-size: 11px; margin-top: 1px; }
+  .header-badge { background: rgba(255,255,255,0.15); color: var(--white); font-size: 11px; font-weight: 500; padding: 4px 14px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.25); letter-spacing: 0.04em; }
 
-  .inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.5rem}
-  .ibox{background:#fff;border-radius:14px;padding:1.3rem;border:1.5px solid #EEEEEE;transition:border-color .15s}
-  .ibox:focus-within{border-color:#CC0000}
-  .ilabel{font-size:9px;font-weight:700;color:#AAAAAA;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-  .imult{display:inline-block;font-size:11px;font-weight:700;background:#FEE2E2;color:#CC0000;border-radius:20px;padding:3px 10px;margin-bottom:12px}
-  .ibox input{width:100%;font-size:42px;font-weight:700;color:#1A1A1A;border:none;border-bottom:2px solid #EEEEEE;background:transparent;padding:2px 0 4px;outline:none;transition:border-color .15s}
-  .ibox input:focus{border-bottom-color:#CC0000}
-  .ibox input::placeholder{color:#DDDDDD}
-  .icontrib{font-size:11px;color:#CCCCCC;margin-top:8px}
-  .icontrib span{color:#999;font-weight:600}
+  .page { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+  .page-title { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: var(--muted); margin-bottom: 2rem; }
 
-  .models{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
-  .mcard{border-radius:14px;padding:1.5rem}
-  .mcard.current{background:#fff;border:1.5px solid #EEEEEE}
-  .mcard.newm{background:#CC0000}
-  .mlabel{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-  .current .mlabel{color:#BBBBBB}
-  .newm .mlabel{color:#FFAAAA}
-  .mname{font-size:13px;font-weight:700;margin-bottom:1rem}
-  .current .mname{color:#888}
-  .newm .mname{color:#fff}
-  .mformula{font-size:10px;font-family:'Courier New',monospace;padding:8px 10px;border-radius:8px;margin-bottom:1rem;line-height:1.8;white-space:pre-line}
-  .current .mformula{background:#F7F7F7;color:#AAAAAA}
-  .newm .mformula{background:rgba(0,0,0,0.15);color:#FFCCCC}
-  .mhrs-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
-  .current .mhrs-label{color:#BBBBBB}
-  .newm .mhrs-label{color:#FFAAAA}
-  .mhrs{font-size:52px;font-weight:700;line-height:1}
-  .current .mhrs{color:#888}
-  .newm .mhrs{color:#fff}
-  .munit{font-size:12px;margin-top:4px}
-  .current .munit{color:#CCCCCC}
-  .newm .munit{color:#FFAAAA}
-  .bflag{font-size:11px;margin-top:8px;font-style:italic;color:#FFBBBB;min-height:18px}
+  .hosp-row { background: var(--white); border-radius: 14px; border: 1.5px solid var(--border); padding: 1.1rem 1.4rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .hosp-row label { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; }
+  .hosp-row select { flex: 1; min-width: 180px; font-size: 14px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; background: #F7F7F7; color: var(--text); outline: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .hosp-row select:focus { border-color: var(--red); }
+  .hosp-badges { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; align-items: center; }
+  .badge { font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 20px; }
+  .badge.tier { background: var(--red-light); color: #991B1B; }
+  .badge.baseline { background: var(--bg); color: #555; }
+  .reset-btn { font-size: 11px; color: #999; border: 1px solid #DDD; background: transparent; border-radius: 20px; padding: 5px 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .reset-btn:hover { color: #555; border-color: #BBB; }
 
-  .gap-card{background:#fff;border-radius:14px;padding:1.3rem 1.5rem;border:1.5px solid #EEEEEE;margin-bottom:1.5rem}
-  .gap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-  .gap-lbl{font-size:9px;font-weight:700;color:#BBBBBB;letter-spacing:2px;text-transform:uppercase}
-  .gap-val{font-size:24px;font-weight:700}
-  .gap-val.over{color:#CC0000}
-  .gap-val.under{color:#16A34A}
-  .gap-val.zero{color:#CCCCCC}
-  .gap-sub{font-size:11px;color:#CCCCCC;margin-top:3px;text-align:right}
-  .bar-track{height:12px;background:#F2F2F2;border-radius:6px;overflow:hidden;display:flex}
-  .bar-cur{height:100%;background:#DDDDDD;transition:width .4s ease}
-  .bar-pos{height:100%;background:#CC0000;transition:width .4s ease}
-  .bar-neg{height:100%;background:#16A34A;transition:width .4s ease}
-  .legend{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap}
-  .legend span{font-size:10px;color:#BBBBBB;display:flex;align-items:center;gap:5px}
-  .dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+  .inputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+  @media (max-width: 600px) { .inputs { grid-template-columns: 1fr; } }
+  .ibox { background: var(--white); border-radius: 14px; padding: 1.2rem; border: 1.5px solid var(--border); transition: border-color .15s; }
+  .ibox:focus-within { border-color: var(--red); }
+  .ilabel { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .imult { display: inline-block; font-size: 11px; font-weight: 700; background: var(--red-light); color: var(--red); border-radius: 20px; padding: 3px 10px; margin-bottom: 10px; }
+  .ibox input { width: 100%; font-size: 38px; font-weight: 700; color: var(--text); border: none; border-bottom: 2px solid var(--border); background: transparent; padding: 2px 0 4px; outline: none; transition: border-color .15s; font-family: 'DM Sans', sans-serif; }
+  .ibox input:focus { border-bottom-color: var(--red); }
+  .ibox input::placeholder { color: #DDD; }
+  .icontrib { font-size: 11px; color: var(--light); margin-top: 6px; }
+  .icontrib span { color: #999; font-weight: 600; }
 
-  .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-  .bbox{background:#fff;border-radius:10px;padding:.9rem 1rem;border:1px solid #EEEEEE}
-  .blabel{font-size:9px;font-weight:700;color:#CCCCCC;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-  .brow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-  .brow .bn{font-size:10px;color:#AAAAAA}
-  .brow .bv{font-size:13px;font-weight:700;color:#888}
-  .brow .bv.red{color:#CC0000}
-  .bottom-bar{height:4px;background:#CC0000;border-radius:3px;margin-top:2rem}
+  .models { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
+  @media (max-width: 600px) { .models { grid-template-columns: 1fr; } }
+  .mcard { border-radius: 14px; padding: 1.4rem; }
+  .mcard.current { background: var(--white); border: 1.5px solid var(--border); }
+  .mcard.newm { background: var(--red); }
+  .mlabel { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .current .mlabel { color: #BBBBBB; }
+  .newm .mlabel { color: #FFAAAA; }
+  .mname { font-size: 12px; font-weight: 700; margin-bottom: 0.9rem; }
+  .current .mname { color: #888; }
+  .newm .mname { color: #fff; }
+  .mformula { font-size: 10px; font-family: 'DM Mono', monospace; padding: 8px 10px; border-radius: 8px; margin-bottom: 0.9rem; line-height: 1.8; white-space: pre-line; }
+  .current .mformula { background: #F7F7F7; color: #AAAAAA; }
+  .newm .mformula { background: rgba(0,0,0,0.15); color: #FFCCCC; }
+  .mhrs-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+  .current .mhrs-label { color: #BBBBBB; }
+  .newm .mhrs-label { color: #FFAAAA; }
+  .mhrs { font-size: 48px; font-weight: 700; line-height: 1; font-family: 'DM Mono', monospace; }
+  .current .mhrs { color: #888; }
+  .newm .mhrs { color: #fff; }
+  .munit { font-size: 11px; margin-top: 3px; }
+  .current .munit { color: #CCCCCC; }
+  .newm .munit { color: #FFAAAA; }
+  .bflag { font-size: 11px; margin-top: 6px; font-style: italic; color: #FFBBBB; min-height: 16px; }
+
+  .gap-card { background: var(--white); border-radius: 14px; padding: 1.3rem 1.4rem; border: 1.5px solid var(--border); margin-bottom: 1.25rem; }
+  .gap-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .gap-lbl { font-size: 9px; font-weight: 700; color: #BBBBBB; letter-spacing: 2px; text-transform: uppercase; }
+  .gap-val { font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; }
+  .gap-val.over { color: var(--red); }
+  .gap-val.under { color: var(--green); }
+  .gap-val.zero { color: #CCCCCC; }
+  .gap-sub { font-size: 11px; color: #CCCCCC; margin-top: 2px; text-align: right; }
+  .bar-track { height: 10px; background: var(--bg); border-radius: 6px; overflow: hidden; display: flex; }
+  .bar-cur { height: 100%; background: #DDDDDD; transition: width .4s ease; }
+  .bar-pos { height: 100%; background: var(--red); transition: width .4s ease; }
+  .bar-neg { height: 100%; background: var(--green); transition: width .4s ease; }
+  .legend { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+  .legend span { font-size: 10px; color: #BBBBBB; display: flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+  .section-lbl { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin: 1.5rem 0 0.75rem; }
+
+  .score-card { background: var(--white); border-radius: 14px; padding: 1.3rem 1.4rem; border: 1.5px solid var(--border); margin-bottom: 1.25rem; }
+  .score-inner { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1rem; }
+  .score-num { font-family: 'DM Mono', monospace; font-size: 52px; font-weight: 500; color: var(--red); line-height: 1; }
+  .score-right { text-align: right; }
+  .score-right-lbl { font-size: 11px; color: var(--muted); }
+  .score-tier { font-size: 20px; font-weight: 700; color: var(--text); margin-top: 2px; }
+  .score-ratio { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--red); margin-top: 2px; }
+  .sbar-track { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; margin-bottom: 0.4rem; }
+  .sbar-fill { height: 100%; background: var(--red); border-radius: 99px; transition: width 0.4s cubic-bezier(.4,0,.2,1); }
+  .sbar-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--light); }
+
+  /* Score formula explainer */
+  .score-formula { font-size: 10px; font-family: 'DM Mono', monospace; background: #F7F7F7; border-radius: 8px; padding: 8px 12px; margin-top: 1rem; color: #AAAAAA; line-height: 1.8; }
+  .score-formula span { color: var(--red); font-weight: 500; }
+
+  .tier-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+  @media (max-width: 560px) { .tier-strip { grid-template-columns: repeat(3, 1fr); } }
+  .tier-block { border-radius: 12px; padding: 12px 8px; text-align: center; border: 1.5px solid var(--border); background: var(--white); transition: all 0.25s cubic-bezier(.4,0,.2,1); }
+  .tier-block.active { background: var(--red); border-color: var(--red); transform: translateY(-3px); box-shadow: 0 8px 22px rgba(204,0,0,0.22); }
+  .tname { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 2px; transition: color 0.2s; }
+  .trange { font-size: 9px; color: var(--light); margin-bottom: 6px; transition: color 0.2s; line-height: 1.4; }
+  .tratio { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text); transition: color 0.2s; }
+  .tier-block.active .tname, .tier-block.active .trange, .tier-block.active .tratio { color: rgba(255,255,255,0.9); }
+
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 560px) { .breakdown { grid-template-columns: 1fr; } }
+  .bbox { background: var(--white); border-radius: 10px; padding: .9rem 1rem; border: 1px solid var(--border); }
+  .blabel { font-size: 9px; font-weight: 700; color: #CCCCCC; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .brow { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .brow .bn { font-size: 10px; color: var(--muted); }
+  .brow .bv { font-size: 13px; font-weight: 700; color: #888; }
+  .brow .bv.red { color: var(--red); }
+  .bottom-bar { height: 4px; background: var(--red); border-radius: 3px; margin-top: 2.5rem; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top-bar"></div>
-  <div class="header">
-    <h1>LABOR MODEL COMPARISON &mdash; CURRENT VS. NEW</h1>
-    <button class="reset-btn" onclick="resetAll()">&#8635; Reset</button>
+
+<header>
+  <div class="logo-area">
+    <div class="logo-paw">🐾</div>
+    <div>
+      <div class="logo-name">VEG — ER for Pets</div>
+      <div class="logo-sub">Acuity Staffing Calculator</div>
+    </div>
   </div>
+  <span class="header-badge">EMORY GOIZUETA</span>
+</header>
+
+<div class="page">
+  <h1 class="page-title">Acuity Staffing Calculator</h1>
+  <p class="page-sub">Select a hospital, enter weekly case volume, and see required staffing hours and the recommended vet : support staff ratio.</p>
 
   <div class="hosp-row">
     <label>Hospital</label>
@@ -98,29 +155,30 @@
       <option value="">-- Select a hospital --</option>
     </select>
     <div class="hosp-badges">
-      <span class="badge tier" id="tierBadge">Tier &mdash;</span>
-      <span class="badge baseline" id="baselineBadge">Baseline: &mdash; hrs</span>
+      <span class="badge tier" id="tierBadge">Tier —</span>
+      <span class="badge baseline" id="baselineBadge">Baseline: — hrs</span>
+      <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
     </div>
   </div>
 
   <div class="inputs">
     <div class="ibox">
       <div class="ilabel">Outpatient cases</div>
-      <div class="imult">&times; 3.48</div>
+      <div class="imult">× 3.48</div>
       <input type="number" id="op" placeholder="0" min="0" oninput="calc()">
-      <div class="icontrib">&#8594; <span id="opc">0</span> hrs</div>
+      <div class="icontrib">→ <span id="opc">0</span> hrs</div>
     </div>
     <div class="ibox">
       <div class="ilabel">Surgery cases</div>
-      <div class="imult">&times; 13.2</div>
+      <div class="imult">× 13.2</div>
       <input type="number" id="sx" placeholder="0" min="0" oninput="calc()">
-      <div class="icontrib">&#8594; <span id="sxc">0</span> hrs</div>
+      <div class="icontrib">→ <span id="sxc">0</span> hrs</div>
     </div>
     <div class="ibox">
       <div class="ilabel">Inpatient cases</div>
-      <div class="imult">&times; 11.4</div>
+      <div class="imult">× 11.4</div>
       <input type="number" id="ip" placeholder="0" min="0" oninput="calc()">
-      <div class="icontrib">&#8594; <span id="ipc">0</span> hrs</div>
+      <div class="icontrib">→ <span id="ipc">0</span> hrs</div>
     </div>
   </div>
 
@@ -128,17 +186,17 @@
     <div class="mcard current">
       <div class="mlabel">Current model</div>
       <div class="mname">Volume-based + baseline floor</div>
-      <div class="mformula" id="cur-f">MAX( Total Cases &times; 4.5, Tier Baseline )</div>
+      <div class="mformula" id="cur-f">MAX( Total Cases × 4.5, Tier Baseline )</div>
       <div class="mhrs-label">Allocated hours</div>
-      <div class="mhrs" id="cur-h">&mdash;</div>
+      <div class="mhrs" id="cur-h">—</div>
       <div class="munit">hrs / week</div>
     </div>
     <div class="mcard newm">
       <div class="mlabel">New model</div>
       <div class="mname">Acuity-weighted + baseline floor</div>
-      <div class="mformula" id="new-f">MAX( (Op &times; 3.48) + (Sx &times; 13.2) + (Ip &times; 11.4), Tier Baseline )</div>
+      <div class="mformula" id="new-f">MAX( (Op × 3.48) + (Sx × 13.2) + (Ip × 11.4), Tier Baseline )</div>
       <div class="mhrs-label">Required hours</div>
-      <div class="mhrs" id="new-h">&mdash;</div>
+      <div class="mhrs" id="new-h">—</div>
       <div class="munit">hrs / week</div>
       <div class="bflag" id="bflag">&nbsp;</div>
     </div>
@@ -146,9 +204,9 @@
 
   <div class="gap-card">
     <div class="gap-top">
-      <div class="gap-lbl">Staffing gap (new &minus; current)</div>
+      <div class="gap-lbl">Staffing gap (new − current)</div>
       <div>
-        <div class="gap-val zero" id="gval">&mdash;</div>
+        <div class="gap-val zero" id="gval">—</div>
         <div class="gap-sub" id="gsub">select a hospital and enter case numbers above</div>
       </div>
     </div>
@@ -163,21 +221,73 @@
     </div>
   </div>
 
+  <div class="section-lbl">Acuity score & staffing ratio</div>
+  <div class="score-card">
+    <div class="score-inner">
+      <div>
+        <div class="score-num" id="score-big">—</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">raw score</div>
+        <div style="font-size:18px;font-weight:700;color:var(--red);margin-top:6px;font-family:'DM Mono',monospace;" id="score-range">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">translated range</div>
+      </div>
+      <div class="score-right">
+        <div class="score-right-lbl">Recommended ratio</div>
+        <div class="score-tier" id="tier-big">—</div>
+        <div class="score-ratio" id="ratio-big">Vet : Support Staff</div>
+      </div>
+    </div>
+    <div class="sbar-track"><div class="sbar-fill" id="sbar" style="width:0%"></div></div>
+    <div class="sbar-labels"><span>0 — low acuity</span><span>1 — high acuity</span></div>
+    <div class="score-formula" id="score-formula-box">
+      Score = (Inpatient × 11.4 + Surgery × 13.2) ÷ Raw Acuity Hours<br>
+      Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)
+    </div>
+  </div>
+
+  <div class="tier-strip">
+    <div class="tier-block" id="t0">
+      <div class="tname">Low</div>
+      <div class="trange">&lt; 0.285</div>
+      <div class="tratio">1 : 2</div>
+    </div>
+    <div class="tier-block" id="t1">
+      <div class="tname">Low–Mid</div>
+      <div class="trange">0.285 – 0.325</div>
+      <div class="tratio">1 : 2.7</div>
+    </div>
+    <div class="tier-block" id="t2">
+      <div class="tname">Mid</div>
+      <div class="trange">0.325 – 0.347</div>
+      <div class="tratio">1 : 3</div>
+    </div>
+    <div class="tier-block" id="t3">
+      <div class="tname">Mid–High</div>
+      <div class="trange">0.347 – 0.373</div>
+      <div class="tratio">1 : 4</div>
+    </div>
+    <div class="tier-block" id="t4">
+      <div class="tname">Very High</div>
+      <div class="trange">&gt; 0.373</div>
+      <div class="tratio">1 : 5</div>
+    </div>
+  </div>
+
+  <div class="section-lbl">Hour breakdown by case type</div>
   <div class="breakdown">
     <div class="bbox">
       <div class="blabel">Outpatient</div>
-      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="doc">&mdash;</span></div>
-      <div class="brow"><span class="bn">New (&times;3.48)</span><span class="bv red" id="don">&mdash;</span></div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="doc">—</span></div>
+      <div class="brow"><span class="bn">New (× 3.48)</span><span class="bv red" id="don">—</span></div>
     </div>
     <div class="bbox">
       <div class="blabel">Surgery</div>
-      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dsc">&mdash;</span></div>
-      <div class="brow"><span class="bn">New (&times;13.2)</span><span class="bv red" id="dsn">&mdash;</span></div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dsc">—</span></div>
+      <div class="brow"><span class="bn">New (× 13.2)</span><span class="bv red" id="dsn">—</span></div>
     </div>
     <div class="bbox">
       <div class="blabel">Inpatient</div>
-      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dic">&mdash;</span></div>
-      <div class="brow"><span class="bn">New (&times;11.4)</span><span class="bv red" id="din">&mdash;</span></div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dic">—</span></div>
+      <div class="brow"><span class="bn">New (× 11.4)</span><span class="bv red" id="din">—</span></div>
     </div>
   </div>
 
@@ -247,103 +357,154 @@ const HOSPITALS = [
   {name:"Winter Park",tier:2,baseline:868},{name:"Woodbury",tier:1,baseline:796},
 ];
 
-var currentBaseline = 868;
+// Ratio tiers based on actual percentile cutoffs from 2025 VEG hospital data
+// Score = (Inpatient×11.4 + Surgery×13.2) ÷ Raw Acuity Hours
+const RATIO_TIERS = [
+  {id:'t0', max:0.28511,  label:'Low',       ratio:'1 : 2'},
+  {id:'t1', max:0.32467,  label:'Low–Mid',   ratio:'1 : 2.7'},
+  {id:'t2', max:0.34650,  label:'Mid',       ratio:'1 : 3'},
+  {id:'t3', max:0.37310,  label:'Mid–High',  ratio:'1 : 4'},
+  {id:'t4', max:Infinity, label:'Very High', ratio:'1 : 5'},
+];
 
-window.onload = function(){
+var currentBaseline = 796;
+
+window.onload = function() {
   var sel = document.getElementById('hospSel');
-  HOSPITALS.forEach(function(h){
+  HOSPITALS.forEach(function(h) {
     var opt = document.createElement('option');
-    opt.value = h.name;
-    opt.textContent = h.name;
+    opt.value = h.name; opt.textContent = h.name;
     sel.appendChild(opt);
   });
 };
 
-function onHospChange(){
+function onHospChange() {
   var name = document.getElementById('hospSel').value;
-  var h = HOSPITALS.find(function(x){return x.name===name;});
-  if(h){
+  var h = HOSPITALS.find(function(x){ return x.name === name; });
+  if (h) {
     currentBaseline = h.baseline;
-    document.getElementById('tierBadge').textContent = 'Tier '+h.tier;
-    document.getElementById('baselineBadge').textContent = 'Baseline: '+h.baseline.toLocaleString()+' hrs';
+    document.getElementById('tierBadge').textContent = 'Tier ' + h.tier;
+    document.getElementById('baselineBadge').textContent = 'Baseline: ' + h.baseline.toLocaleString() + ' hrs';
   } else {
-    currentBaseline = 868;
-    document.getElementById('tierBadge').textContent = 'Tier \u2014';
-    document.getElementById('baselineBadge').textContent = 'Baseline: \u2014 hrs';
+    currentBaseline = 796;
+    document.getElementById('tierBadge').textContent = 'Tier —';
+    document.getElementById('baselineBadge').textContent = 'Baseline: — hrs';
   }
   calc();
 }
 
-function calc(){
-  var op=parseFloat(document.getElementById('op').value)||0;
-  var sx=parseFloat(document.getElementById('sx').value)||0;
-  var ip=parseFloat(document.getElementById('ip').value)||0;
-  var bl=currentBaseline;
-  var has=op>0||sx>0||ip>0;
-  var tot=op+sx+ip;
-  var curRaw=tot*4.5;
-  var cur=Math.max(curRaw,bl);
-  var a=op*3.48,b=sx*13.2,c=ip*11.4;
-  var raw=a+b+c;
-  var nw=Math.max(raw,bl);
-  var gap=nw-cur;
-  var floorOnNew=raw<bl;
+function calc() {
+  var op = parseFloat(document.getElementById('op').value) || 0;
+  var sx = parseFloat(document.getElementById('sx').value) || 0;
+  var ip = parseFloat(document.getElementById('ip').value) || 0;
+  var bl = currentBaseline;
+  var has = op > 0 || sx > 0 || ip > 0;
+  var tot = op + sx + ip;
 
-  document.getElementById('opc').textContent=a.toFixed(1);
-  document.getElementById('sxc').textContent=b.toFixed(1);
-  document.getElementById('ipc').textContent=c.toFixed(1);
+  var a = op * 3.48, b = sx * 13.2, c = ip * 11.4;
+  var raw = a + b + c;           // Raw Acuity Hours
+  var curRaw = tot * 4.5;
+  var cur = Math.max(curRaw, bl);
+  var nw  = Math.max(raw, bl);
+  var gap = nw - cur;
+  var floorOnNew = raw < bl;
 
-  document.getElementById('cur-f').textContent=has
-    ?'('+op+'+'+sx+'+'+ip+') \u00d7 4.5 = '+Math.round(curRaw).toLocaleString()+'\nMAX('+Math.round(curRaw).toLocaleString()+', '+bl.toLocaleString()+') = '+Math.round(cur).toLocaleString()+' hrs'
-    :'MAX( Total Cases \u00d7 4.5, Tier Baseline )';
+  document.getElementById('opc').textContent = a.toFixed(1);
+  document.getElementById('sxc').textContent = b.toFixed(1);
+  document.getElementById('ipc').textContent = c.toFixed(1);
 
-  document.getElementById('new-f').textContent=has
-    ?'('+op+'\u00d73.48)+('+sx+'\u00d713.2)+('+ip+'\u00d711.4)\n= '+raw.toFixed(0)+' raw hrs\nMAX('+raw.toFixed(0)+', '+bl.toLocaleString()+') = '+Math.round(nw).toLocaleString()+' hrs'
-    :'MAX( (Op \u00d7 3.48) + (Sx \u00d7 13.2) + (Ip \u00d7 11.4), Tier Baseline )';
+  document.getElementById('cur-f').textContent = has
+    ? '('+op+'+'+sx+'+'+ip+') × 4.5 = '+Math.round(curRaw).toLocaleString()+'\nMAX('+Math.round(curRaw).toLocaleString()+', '+bl.toLocaleString()+') = '+Math.round(cur).toLocaleString()+' hrs'
+    : 'MAX( Total Cases × 4.5, Tier Baseline )';
+  document.getElementById('new-f').textContent = has
+    ? '('+op+'×3.48)+('+sx+'×13.2)+('+ip+'×11.4)\n= '+raw.toFixed(0)+' raw hrs\nMAX('+raw.toFixed(0)+', '+bl.toLocaleString()+') = '+Math.round(nw).toLocaleString()+' hrs'
+    : 'MAX( (Op × 3.48) + (Sx × 13.2) + (Ip × 11.4), Tier Baseline )';
 
-  document.getElementById('cur-h').textContent=has?Math.round(cur).toLocaleString():'\u2014';
-  document.getElementById('new-h').textContent=has?Math.round(nw).toLocaleString():'\u2014';
-  document.getElementById('bflag').textContent=has
-    ?(floorOnNew?'\u2b06 Baseline floor active (raw: '+raw.toFixed(0)+' hrs)':'Acuity drives staffing \u2014 above baseline')
-    :'\u00a0';
+  document.getElementById('cur-h').textContent = has ? Math.round(cur).toLocaleString() : '—';
+  document.getElementById('new-h').textContent = has ? Math.round(nw).toLocaleString() : '—';
+  document.getElementById('bflag').textContent  = has
+    ? (floorOnNew ? '↑ Baseline floor active (raw: '+raw.toFixed(0)+' hrs)' : 'Acuity drives staffing — above baseline')
+    : '\u00a0';
 
-  var gEl=document.getElementById('gval');
-  var gSub=document.getElementById('gsub');
-  if(!has){
-    gEl.textContent='\u2014';gEl.className='gap-val zero';
-    gSub.textContent='select a hospital and enter case numbers above';
-  } else if(gap>0.5){
-    gEl.textContent='+'+Math.round(gap).toLocaleString()+' hrs';
-    gEl.className='gap-val over';
-    gSub.textContent='current model understaffs by '+Math.round(gap).toLocaleString()+' hrs \u2014 '+((gap/cur)*100).toFixed(1)+'% shortfall';
-  } else if(gap<-0.5){
-    gEl.textContent=Math.round(gap).toLocaleString()+' hrs';
-    gEl.className='gap-val under';
-    gSub.textContent='new model saves '+Math.round(Math.abs(gap)).toLocaleString()+' hrs vs. current';
+  // Gap
+  var gEl = document.getElementById('gval'), gSub = document.getElementById('gsub');
+  if (!has) {
+    gEl.textContent = '—'; gEl.className = 'gap-val zero';
+    gSub.textContent = 'select a hospital and enter case numbers above';
+  } else if (gap > 0.5) {
+    gEl.textContent = '+'+Math.round(gap).toLocaleString()+' hrs'; gEl.className = 'gap-val over';
+    gSub.textContent = 'current model understaffs by '+Math.round(gap).toLocaleString()+' hrs — '+((gap/cur)*100).toFixed(1)+'% shortfall';
+  } else if (gap < -0.5) {
+    gEl.textContent = Math.round(gap).toLocaleString()+' hrs'; gEl.className = 'gap-val under';
+    gSub.textContent = 'new model saves '+Math.round(Math.abs(gap)).toLocaleString()+' hrs vs. current';
   } else {
-    gEl.textContent='0 hrs';gEl.className='gap-val zero';gSub.textContent='both models align';
+    gEl.textContent = '0 hrs'; gEl.className = 'gap-val zero'; gSub.textContent = 'both models align';
   }
 
-  var mx=Math.max(cur,nw,1);
-  document.getElementById('bcur').style.width=(cur/mx*100).toFixed(1)+'%';
-  var bg=document.getElementById('bgap');
-  bg.style.width=(Math.abs(gap)/mx*100).toFixed(1)+'%';
-  bg.className=gap>=0?'bar-pos':'bar-neg';
+  var mx = Math.max(cur, nw, 1);
+  document.getElementById('bcur').style.width = (cur/mx*100).toFixed(1)+'%';
+  var bg = document.getElementById('bgap');
+  bg.style.width = (Math.abs(gap)/mx*100).toFixed(1)+'%';
+  bg.className = gap >= 0 ? 'bar-pos' : 'bar-neg';
 
-  document.getElementById('doc').textContent=has?(op/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs':'\u2014';
-  document.getElementById('don').textContent=has?a.toFixed(0)+' hrs':'\u2014';
-  document.getElementById('dsc').textContent=has?(sx/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs':'\u2014';
-  document.getElementById('dsn').textContent=has?b.toFixed(0)+' hrs':'\u2014';
-  document.getElementById('dic').textContent=has?(ip/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs':'\u2014';
-  document.getElementById('din').textContent=has?c.toFixed(0)+' hrs':'\u2014';
+  // Acuity score: (Inpatient×11.4 + Surgery×13.2) ÷ Raw Acuity Hours
+  var acuityNumer = c + b;  // ip*11.4 + sx*13.2
+  var score = raw > 0 ? acuityNumer / raw : 0;
+
+  document.getElementById('score-big').textContent = has ? score.toFixed(5) : '—';
+  // Bar scaled to max realistic score of ~0.78 from data
+  document.getElementById('sbar').style.width = has ? Math.min(score / 0.78 * 100, 100).toFixed(1)+'%' : '0%';
+
+  // Update formula box with live numbers
+  if (has) {
+    document.getElementById('score-formula-box').innerHTML =
+      'Raw Acuity Hours = ('+op+'×3.48) + ('+sx+'×13.2) + ('+ip+'×11.4) = <span>'+raw.toFixed(2)+'</span><br>' +
+      'Score = ('+ip+'×11.4 + '+sx+'×13.2) ÷ '+raw.toFixed(2)+' = <span>'+score.toFixed(5)+'</span>';
+  } else {
+    document.getElementById('score-formula-box').innerHTML =
+      'Score = (Inpatient × 11.4 + Surgery × 13.2) ÷ Raw Acuity Hours<br>' +
+      'Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)';
+  }
+
+  // Assign ratio tier + translated range label
+  var activeT = RATIO_TIERS[RATIO_TIERS.length - 1];
+  if (has) {
+    for (var i = 0; i < RATIO_TIERS.length; i++) {
+      if (score < RATIO_TIERS[i].max) { activeT = RATIO_TIERS[i]; break; }
+    }
+    document.getElementById('tier-big').textContent  = activeT.label;
+    document.getElementById('ratio-big').textContent = 'Vet : Support Staff = ' + activeT.ratio;
+    var rangeLabel;
+    if      (score < 0.285)                        rangeLabel = 'below 0.4';
+    else if (score >= 0.285 && score < 0.325)      rangeLabel = '0.4 \u2013 0.6';
+    else if (score >= 0.325 && score < 0.347)      rangeLabel = '0.6 \u2013 0.7';
+    else if (score >= 0.347 && score < 0.373)      rangeLabel = '0.7 \u2013 0.8';
+    else                                            rangeLabel = 'above 0.8';
+    document.getElementById('score-range').textContent = rangeLabel;
+  } else {
+    document.getElementById('tier-big').textContent  = '\u2014';
+    document.getElementById('ratio-big').textContent = 'Vet : Support Staff';
+    document.getElementById('score-range').textContent = '\u2014';
+  }
+  RATIO_TIERS.forEach(function(t) {
+    document.getElementById(t.id).classList.toggle('active', has && t.id === activeT.id);
+  });
+
+  // Breakdown
+  document.getElementById('doc').textContent = has ? (op/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs' : '—';
+  document.getElementById('don').textContent = has ? a.toFixed(0)+' hrs' : '—';
+  document.getElementById('dsc').textContent = has ? (sx/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs' : '—';
+  document.getElementById('dsn').textContent = has ? b.toFixed(0)+' hrs' : '—';
+  document.getElementById('dic').textContent = has ? (ip/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs' : '—';
+  document.getElementById('din').textContent = has ? c.toFixed(0)+' hrs' : '—';
 }
 
-function resetAll(){
-  document.getElementById('hospSel').value='';
-  document.getElementById('tierBadge').textContent='Tier \u2014';
-  document.getElementById('baselineBadge').textContent='Baseline: \u2014 hrs';
-  currentBaseline=868;
-  ['op','sx','ip'].forEach(function(id){document.getElementById(id).value='';});
+function resetAll() {
+  document.getElementById('hospSel').value = '';
+  document.getElementById('tierBadge').textContent = 'Tier —';
+  document.getElementById('baselineBadge').textContent = 'Baseline: — hrs';
+  currentBaseline = 796;
+  ['op','sx','ip'].forEach(function(id){ document.getElementById(id).value = ''; });
   calc();
 }
 </script>
