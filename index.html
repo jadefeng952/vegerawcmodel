@@ -206,6 +206,13 @@
     </div>
   </div>
 
+  <!-- DECISION BANNER -->
+  <div id="decision-banner" style="display:none; border-radius:14px; padding:1.2rem 1.5rem; margin-bottom:1.25rem; border:2px solid; transition: all 0.3s;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" id="decision-label">—</div>
+    <div style="font-size:22px;font-weight:700;margin-bottom:4px;" id="decision-headline">—</div>
+    <div style="font-size:13px;margin-top:2px;" id="decision-sub">—</div>
+  </div>
+
   <div class="gap-card">
     <div class="gap-top">
       <div class="gap-lbl">Staffing gap (new − current)</div>
@@ -448,6 +455,49 @@ function calc() {
     gSub.textContent = 'new model saves '+Math.round(Math.abs(gap)).toLocaleString()+' hrs vs. current';
   } else {
     gEl.textContent = '0 hrs'; gEl.className = 'gap-val zero'; gSub.textContent = 'both models align';
+  }
+
+  // DECISION BANNER
+  var banner = document.getElementById('decision-banner');
+  var dLabel = document.getElementById('decision-label');
+  var dHead  = document.getElementById('decision-headline');
+  var dSub   = document.getElementById('decision-sub');
+
+  if (!has) {
+    banner.style.display = 'none';
+  } else if (floorOnNew) {
+    // Acuity formula < baseline → use baseline
+    banner.style.display = 'block';
+    banner.style.background = '#FFF7ED';
+    banner.style.borderColor = '#F59E0B';
+    dLabel.style.color = '#92400E';
+    dLabel.textContent = 'RESULT — BASELINE FLOOR APPLIED';
+    dHead.style.color = '#92400E';
+    dHead.textContent = 'Acuity formula (' + Math.round(raw).toLocaleString() + ' hrs) is below baseline floor';
+    dSub.style.color = '#B45309';
+    dSub.textContent = 'Below baseline? Take the baseline. → Schedule ' + Math.round(nw).toLocaleString() + ' hrs (Tier baseline: ' + bl.toLocaleString() + ' hrs)';
+  } else if (gap > 0.5) {
+    // New model > current → understaffed under current
+    banner.style.display = 'block';
+    banner.style.background = '#FEF2F2';
+    banner.style.borderColor = '#CC0000';
+    dLabel.style.color = '#991B1B';
+    dLabel.textContent = 'RESULT — UNDERSTAFFED UNDER CURRENT MODEL';
+    dHead.style.color = '#991B1B';
+    dHead.textContent = 'New model requires ' + Math.round(gap).toLocaleString() + ' more hrs than current model allocates';
+    dSub.style.color = '#CC0000';
+    dSub.textContent = 'Acuity drives hours above baseline. → Schedule ' + Math.round(nw).toLocaleString() + ' hrs to meet demand.';
+  } else {
+    // Models aligned or new ≤ current
+    banner.style.display = 'block';
+    banner.style.background = '#F0FDF4';
+    banner.style.borderColor = '#16A34A';
+    dLabel.style.color = '#14532D';
+    dLabel.textContent = 'RESULT — MODELS ALIGNED';
+    dHead.style.color = '#14532D';
+    dHead.textContent = 'New model agrees with current allocation';
+    dSub.style.color = '#16A34A';
+    dSub.textContent = 'Schedule ' + Math.round(nw).toLocaleString() + ' hrs. No staffing gap detected.';
   }
 
   var mx = Math.max(cur, nw, 1);
