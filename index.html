@@ -487,8 +487,19 @@ function calc() {
     dHead.textContent = 'New model requires ' + Math.round(gap).toLocaleString() + ' more hrs than current model allocates';
     dSub.style.color = '#CC0000';
     dSub.textContent = 'Acuity drives hours above baseline. → Schedule ' + Math.round(nw).toLocaleString() + ' hrs to meet demand.';
+  } else if (gap < -0.5) {
+    // New model < current → current model is overstaffing
+    banner.style.display = 'block';
+    banner.style.background = '#F0FDF4';
+    banner.style.borderColor = '#16A34A';
+    dLabel.style.color = '#14532D';
+    dLabel.textContent = 'RESULT — CURRENT MODEL OVERSTAFFS';
+    dHead.style.color = '#14532D';
+    dHead.textContent = 'New model detects ' + Math.round(Math.abs(gap)).toLocaleString() + ' fewer hrs needed than current model allocates';
+    dSub.style.color = '#16A34A';
+    dSub.textContent = 'Acuity-adjusted hours: ' + Math.round(nw).toLocaleString() + ' hrs vs. current ' + Math.round(cur).toLocaleString() + ' hrs — potential savings of ' + Math.round(Math.abs(gap)).toLocaleString() + ' hrs/week.';
   } else {
-    // Models aligned or new ≤ current
+    // Truly aligned
     banner.style.display = 'block';
     banner.style.background = '#F0FDF4';
     banner.style.borderColor = '#16A34A';
