@@ -119,7 +119,7 @@
   .tname { font-size: 11px; font-weight: 700; color: #555; margin-bottom: 4px; transition: color 0.2s; text-transform: uppercase; letter-spacing: 0.04em; }
   .tpercentile { font-size: 28px; font-weight: 700; color: #1A1A1A; margin-bottom: 3px; transition: color 0.2s; line-height: 1.2; }
   .trange { font-size: 10px; color: #777; margin-bottom: 8px; transition: color 0.2s; line-height: 1.4; }
-  .tratio { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 700; color: var(--red); transition: color 0.2s; }
+  .tratio { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; color: var(--red); transition: color 0.2s; }
   .tier-block.active .tname { color: rgba(255,255,255,0.75); }
   .tier-block.active .tpercentile { color: #fff; }
   .tier-block.active .trange { color: rgba(255,255,255,0.7); }
@@ -133,6 +133,36 @@
   .brow .bn { font-size: 10px; color: var(--muted); }
   .brow .bv { font-size: 13px; font-weight: 700; color: #888; }
   .brow .bv.red { color: var(--red); }
+  /* Scenario walkthrough blocks */
+  .scenario-tabs { display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap; }
+  .stab { font-size:12px; font-weight:600; padding:8px 18px; border-radius:99px; border:1.5px solid var(--border); background:var(--white); color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .2s; }
+  .stab:hover { border-color:#BBB; color:var(--text); }
+  .stab.active { background:var(--text); border-color:var(--text); color:#fff; }
+  .scenario-block { background:var(--white); border-radius:14px; border:1.5px solid var(--border); overflow:hidden; margin-bottom:1.25rem; }
+  .scenario-block.hidden { display:none; }
+  .sc-intro { padding:1rem 1.4rem; border-bottom:1px solid #F0F0F0; }
+  .sc-badge { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 12px; border-radius:99px; margin-bottom:6px; }
+  .sc-badge.red   { background:#FEE2E2; color:#991B1B; }
+  .sc-badge.amber { background:#FEF3C7; color:#92400E; }
+  .sc-badge.green { background:#DCFCE7; color:#14532D; }
+  .sc-desc { font-size:13px; color:var(--muted); }
+  .sc-steps { padding:1rem 1.4rem; display:flex; flex-direction:column; gap:0; }
+  .sc-step { display:grid; grid-template-columns:28px 1fr; gap:0 14px; padding:.8rem 0; border-bottom:1px solid #F5F5F5; }
+  .sc-step:last-child { border-bottom:none; }
+  .sc-step-num { width:28px; height:28px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .sc-step-body { display:flex; flex-direction:column; gap:6px; }
+  .sc-step-title { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+  .sc-rows { display:flex; flex-direction:column; gap:3px; }
+  .sc-row { display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:13px; color:var(--text); }
+  .sc-row .op { color:var(--muted); font-size:11px; }
+  .sc-row.sum { border-top:1.5px solid #EBEBEB; margin-top:3px; padding-top:5px; font-weight:700; }
+  .sc-row.note { font-size:12px; color:var(--muted); margin-top:1px; }
+  .sc-row.note span { font-style:italic; }
+  .scv { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:#555; white-space:nowrap; }
+  .scv.red   { color:#CC0000; }
+  .scv.amber { color:#D97706; }
+  .scv.green { color:#16A34A; }
+
   .bottom-bar { height: 4px; background: var(--red); border-radius: 3px; margin-top: 2.5rem; }
 </style>
 </head>
@@ -186,6 +216,7 @@
     </div>
   </div>
 
+
   <div class="models">
     <div class="mcard current">
       <div class="mlabel">Current model</div>
@@ -237,14 +268,14 @@
     <div class="score-inner">
       <div>
         <div class="score-num" id="score-big">—</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">raw score</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">acuity score</div>
         <div style="font-size:36px;font-weight:700;color:var(--red);margin-top:6px;font-family:'DM Mono',monospace;" id="score-range">—</div>
         <div style="font-size:11px;color:var(--muted);margin-top:2px;">translated range</div>
       </div>
       <div class="score-right">
         <div class="score-right-lbl">Recommended ratio</div>
         <div class="score-tier" id="tier-big">—</div>
-        <div class="score-ratio" id="ratio-big">Vet : Support Staff</div>
+        <div class="score-ratio" id="ratio-big">Veterinarian : Support Staff</div>
       </div>
     </div>
     <div class="sbar-track"><div class="sbar-fill" id="sbar" style="width:0%"></div></div>
@@ -260,31 +291,208 @@
       <div class="tname">Low</div>
       <div class="tpercentile">Below 40%</div>
       <div class="trange">&lt; 28.5%</div>
-      <div class="tratio">1 : 2</div>
+      <div class="tratio">1 Vet : 2 Staff</div>
     </div>
     <div class="tier-block" id="t1">
       <div class="tname">Low–Mid</div>
       <div class="tpercentile">40% – 60%</div>
       <div class="trange">28.5% – 32.5%</div>
-      <div class="tratio">1 : 2.7</div>
+      <div class="tratio">1 Vet : 2.7 Staff</div>
     </div>
     <div class="tier-block" id="t2">
       <div class="tname">Mid</div>
       <div class="tpercentile">60% – 70%</div>
       <div class="trange">32.5% – 34.7%</div>
-      <div class="tratio">1 : 3</div>
+      <div class="tratio">1 Vet : 3 Staff</div>
     </div>
     <div class="tier-block" id="t3">
       <div class="tname">Mid–High</div>
       <div class="tpercentile">70% – 80%</div>
       <div class="trange">34.7% – 37.3%</div>
-      <div class="tratio">1 : 4</div>
+      <div class="tratio">1 Vet : 4 Staff</div>
     </div>
     <div class="tier-block" id="t4">
       <div class="tname">Very High</div>
       <div class="tpercentile">Above 80%</div>
       <div class="trange">&gt; 37.3%</div>
-      <div class="tratio">1 : 5</div>
+      <div class="tratio">1 Vet : 5 Staff</div>
+    </div>
+  </div>
+
+  <div class="section-lbl">How the model works — scenario walkthrough</div>
+
+  <!-- Scenario tabs -->
+  <div class="scenario-tabs">
+    <button class="stab active" onclick="showScenario('understaffed', this)">🔴 Understaffed</button>
+    <button class="stab" onclick="showScenario('baseline', this)">🟡 Baseline Floor</button>
+    <button class="stab" onclick="showScenario('aligned', this)">🟢 Models Align</button>
+  </div>
+
+  <!-- Scenario: Understaffed -->
+  <div class="scenario-block" id="sc-understaffed">
+    <div class="sc-intro">
+      <div class="sc-badge red">High inpatient load — current model falls short</div>
+      <div class="sc-desc">237 outpatient · 14 surgery · 69 inpatient — a heavy inpatient week that the volume model can't see</div>
+    </div>
+    <div class="sc-steps">
+      <div class="sc-step">
+        <div class="sc-step-num">1</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Multiply each case type by its clinical hours</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>237 outpatient <strong>× 3.48 hrs</strong></span><span class="scv">= 824.8 hrs</span></div>
+            <div class="sc-row"><span>14 surgery <strong>× 13.2 hrs</strong></span><span class="scv">= 184.8 hrs</span></div>
+            <div class="sc-row"><span>69 inpatient <strong>× 11.4 hrs</strong></span><span class="scv">= 786.6 hrs</span></div>
+            <div class="sc-row sum"><span>Total acuity-weighted hours</span><span class="scv red">1,796.2 hrs</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">2</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Compare to what the current model allocates</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>Current model <span class="op">(320 cases × 4.5)</span></span><span class="scv">1,440 hrs</span></div>
+            <div class="sc-row"><span>AWC model <span class="op">(acuity-weighted)</span></span><span class="scv">1,796 hrs</span></div>
+            <div class="sc-row sum"><span>Gap — current model misses</span><span class="scv red">+356 hrs</span></div>
+            <div class="sc-row note"><span>→ Add <strong>10 nurses</strong> (from 40 → 50) to cover actual demand</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">3</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Calculate acuity score</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>High-intensity hrs <span class="op">(inpatient + surgery)</span></span><span class="scv">971.4 hrs</span></div>
+            <div class="sc-row"><span>÷ Total acuity-weighted hrs</span><span class="scv">1,796.2 hrs</span></div>
+            <div class="sc-row sum"><span>Acuity score</span><span class="scv red">54.1%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">4</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Map score to staffing ratio</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>54.1% falls in</span><span class="scv">40% – 60% percentile</span></div>
+            <div class="sc-row"><span>Acuity tier</span><span class="scv">Low–Mid</span></div>
+            <div class="sc-row sum"><span>→ Recommended ratio</span><span class="scv red">1 Vet : 2.7 Staff</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scenario: Baseline Floor -->
+  <div class="scenario-block hidden" id="sc-baseline">
+    <div class="sc-intro">
+      <div class="sc-badge amber">Low volume week — baseline floor protects minimum staffing</div>
+      <div class="sc-desc">161 outpatient · 1 surgery · 20 inpatient — a quiet week where the acuity formula falls below the tier minimum</div>
+    </div>
+    <div class="sc-steps">
+      <div class="sc-step">
+        <div class="sc-step-num">1</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Multiply each case type by its clinical hours</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>161 outpatient <strong>× 3.48 hrs</strong></span><span class="scv">= 560.3 hrs</span></div>
+            <div class="sc-row"><span>1 surgery <strong>× 13.2 hrs</strong></span><span class="scv">= 13.2 hrs</span></div>
+            <div class="sc-row"><span>20 inpatient <strong>× 11.4 hrs</strong></span><span class="scv">= 228.0 hrs</span></div>
+            <div class="sc-row sum"><span>Total acuity-weighted hours</span><span class="scv amber">801.5 hrs</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">2</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Check against tier baseline floor</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>AWC formula result</span><span class="scv">801.5 hrs</span></div>
+            <div class="sc-row"><span>Tier baseline minimum</span><span class="scv">868 hrs</span></div>
+            <div class="sc-row sum"><span>Formula below baseline → take baseline</span><span class="scv amber">868 hrs scheduled</span></div>
+            <div class="sc-row note"><span>→ Keep <strong>25 nurses</strong> — protects staff during slow weeks</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">3</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Calculate acuity score</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>High-intensity hrs <span class="op">(inpatient + surgery)</span></span><span class="scv">241.2 hrs</span></div>
+            <div class="sc-row"><span>÷ Total acuity-weighted hrs</span><span class="scv">801.5 hrs</span></div>
+            <div class="sc-row sum"><span>Acuity score</span><span class="scv amber">30.1%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">4</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Map score to staffing ratio</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>30.1% falls in</span><span class="scv">Below 40% percentile</span></div>
+            <div class="sc-row"><span>Acuity tier</span><span class="scv">Low</span></div>
+            <div class="sc-row sum"><span>→ Recommended ratio</span><span class="scv amber">1 Vet : 2 Staff</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scenario: Models Align -->
+  <div class="scenario-block hidden" id="sc-aligned">
+    <div class="sc-intro">
+      <div class="sc-badge green">Typical week — both models agree</div>
+      <div class="sc-desc">200 outpatient · 5 surgery · 25 inpatient — a balanced mix where the current model happens to get it right</div>
+    </div>
+    <div class="sc-steps">
+      <div class="sc-step">
+        <div class="sc-step-num">1</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Multiply each case type by its clinical hours</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>200 outpatient <strong>× 3.48 hrs</strong></span><span class="scv">= 696.0 hrs</span></div>
+            <div class="sc-row"><span>5 surgery <strong>× 13.2 hrs</strong></span><span class="scv">= 66.0 hrs</span></div>
+            <div class="sc-row"><span>25 inpatient <strong>× 11.4 hrs</strong></span><span class="scv">= 285.0 hrs</span></div>
+            <div class="sc-row sum"><span>Total acuity-weighted hours</span><span class="scv green">1,047.0 hrs</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">2</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Compare to what the current model allocates</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>Current model <span class="op">(230 cases × 4.5)</span></span><span class="scv">1,035 hrs</span></div>
+            <div class="sc-row"><span>AWC model <span class="op">(acuity-weighted)</span></span><span class="scv">1,047 hrs</span></div>
+            <div class="sc-row sum"><span>Gap — models essentially agree</span><span class="scv green">+12 hrs (≈ 0%)</span></div>
+            <div class="sc-row note"><span>→ <strong>29 nurses</strong> — no adjustment needed this week</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">3</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Calculate acuity score</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>High-intensity hrs <span class="op">(inpatient + surgery)</span></span><span class="scv">351.0 hrs</span></div>
+            <div class="sc-row"><span>÷ Total acuity-weighted hrs</span><span class="scv">1,047.0 hrs</span></div>
+            <div class="sc-row sum"><span>Acuity score</span><span class="scv green">33.5%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-num">4</div>
+        <div class="sc-step-body">
+          <div class="sc-step-title">Map score to staffing ratio</div>
+          <div class="sc-rows">
+            <div class="sc-row"><span>33.5% falls in</span><span class="scv">Below 40% percentile</span></div>
+            <div class="sc-row"><span>Acuity tier</span><span class="scv">Low</span></div>
+            <div class="sc-row sum"><span>→ Recommended ratio</span><span class="scv green">1 Vet : 2 Staff</span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -376,11 +584,11 @@ const HOSPITALS = [
 // Ratio tiers based on actual percentile cutoffs from 2025 VEG hospital data
 // Score = (Inpatient×11.4 + Surgery×13.2) ÷ Raw Acuity Hours
 const RATIO_TIERS = [
-  {id:'t0', max:0.28511,  label:'Low',       ratio:'1 : 2'},
-  {id:'t1', max:0.32467,  label:'Low–Mid',   ratio:'1 : 2.7'},
-  {id:'t2', max:0.34650,  label:'Mid',       ratio:'1 : 3'},
-  {id:'t3', max:0.37310,  label:'Mid–High',  ratio:'1 : 4'},
-  {id:'t4', max:Infinity, label:'Very High', ratio:'1 : 5'},
+  {id:'t0', max:0.28511,  label:'Low',       ratio:'1 Vet : 2 Staff'},
+  {id:'t1', max:0.32467,  label:'Low–Mid',   ratio:'1 Vet : 2.7 Staff'},
+  {id:'t2', max:0.34650,  label:'Mid',       ratio:'1 Vet : 3 Staff'},
+  {id:'t3', max:0.37310,  label:'Mid–High',  ratio:'1 Vet : 4 Staff'},
+  {id:'t4', max:Infinity, label:'Very High', ratio:'1 Vet : 5 Staff'},
 ];
 
 var currentBaseline = 796;
@@ -457,6 +665,22 @@ function calc() {
     gEl.textContent = '0 hrs'; gEl.className = 'gap-val zero'; gSub.textContent = 'both models align';
   }
 
+  // Acuity score — must be calculated before banner block
+  var acuityNumer = c + b;  // ip*11.4 + sx*13.2
+  var score = raw > 0 ? acuityNumer / raw : 0;
+  var activeT = RATIO_TIERS[RATIO_TIERS.length - 1];
+  if (has) {
+    for (var i = 0; i < RATIO_TIERS.length; i++) {
+      if (score < RATIO_TIERS[i].max) { activeT = RATIO_TIERS[i]; break; }
+    }
+  }
+
+  // Nurse counts: 36 hrs/week = one full-time nurse (3 × 12-hr shifts)
+  var HRS_PER_NURSE = 36;
+  var nursesNew = Math.ceil(nw / HRS_PER_NURSE);
+  var nursesCur = Math.ceil(cur / HRS_PER_NURSE);
+  var nurseDelta = nursesNew - nursesCur;
+
   // DECISION BANNER
   var banner = document.getElementById('decision-banner');
   var dLabel = document.getElementById('decision-label');
@@ -467,37 +691,40 @@ function calc() {
     banner.style.display = 'none';
   } else if (floorOnNew) {
     // Acuity formula < baseline → use baseline
+    var nurseBaseline = Math.ceil(bl / HRS_PER_NURSE);
     banner.style.display = 'block';
     banner.style.background = '#FFF7ED';
     banner.style.borderColor = '#F59E0B';
     dLabel.style.color = '#92400E';
     dLabel.textContent = 'RESULT — BASELINE FLOOR APPLIED';
     dHead.style.color = '#92400E';
-    dHead.textContent = 'Acuity formula (' + Math.round(raw).toLocaleString() + ' hrs) is below baseline floor';
+    dHead.textContent = 'Acuity is low — baseline floor sets minimum staffing at ' + nurseBaseline + ' nurses (' + Math.round(bl).toLocaleString() + ' hrs/week)';
     dSub.style.color = '#B45309';
-    dSub.textContent = 'Below baseline? Take the baseline. → Schedule ' + Math.round(nw).toLocaleString() + ' hrs (Tier baseline: ' + bl.toLocaleString() + ' hrs)';
+    dSub.textContent = '→ No change from current model. Keep ' + nurseBaseline + ' nurses on shift at ' + activeT.ratio + ' ratio.';
   } else if (gap > 0.5) {
     // New model > current → understaffed under current
+    var shortfallPct = ((gap/cur)*100).toFixed(1);
     banner.style.display = 'block';
     banner.style.background = '#FEF2F2';
     banner.style.borderColor = '#CC0000';
     dLabel.style.color = '#991B1B';
-    dLabel.textContent = 'RESULT — UNDERSTAFFED UNDER CURRENT MODEL';
+    dLabel.textContent = 'RESULT — ADD ' + nurseDelta + ' NURSE' + (nurseDelta !== 1 ? 'S' : '') + ' · Current model understaffs by ' + shortfallPct + '%';
     dHead.style.color = '#991B1B';
-    dHead.textContent = 'New model requires ' + Math.round(gap).toLocaleString() + ' more hrs than current model allocates';
+    dHead.textContent = nurseDelta + ' additional nurse' + (nurseDelta !== 1 ? 's' : '') + ' needed — from ' + nursesCur + ' (current) to ' + nursesNew + ' (acuity-adjusted)';
     dSub.style.color = '#CC0000';
-    dSub.textContent = 'Acuity drives hours above baseline. → Schedule ' + Math.round(nw).toLocaleString() + ' hrs to meet demand.';
+    dSub.textContent = '→ Schedule ' + nursesNew + ' nurses × 36 hrs = ' + Math.round(nw).toLocaleString() + ' hrs/week at ' + activeT.ratio + ' vet:staff ratio.';
   } else if (gap < -0.5) {
-    // New model < current → current model is overstaffing
+    // New model < current → acuity-adjusted model finds efficiency
+    var nursesSaved = nursesCur - nursesNew;
     banner.style.display = 'block';
     banner.style.background = '#F0FDF4';
     banner.style.borderColor = '#16A34A';
     dLabel.style.color = '#14532D';
-    dLabel.textContent = 'RESULT — CURRENT MODEL OVERSTAFFS';
+    dLabel.textContent = 'RESULT — ' + (nursesSaved > 0 ? nursesSaved + ' NURSE' + (nursesSaved !== 1 ? 'S' : '') + ' CAN BE REALLOCATED' : 'ACUITY-ADJUSTED HOURS LOWER');
     dHead.style.color = '#14532D';
-    dHead.textContent = 'New model detects ' + Math.round(Math.abs(gap)).toLocaleString() + ' fewer hrs needed than current model allocates';
+    dHead.textContent = 'Low case complexity — model calls for ' + nursesNew + ' nurses vs. ' + nursesCur + ' under current model';
     dSub.style.color = '#16A34A';
-    dSub.textContent = 'Acuity-adjusted hours: ' + Math.round(nw).toLocaleString() + ' hrs vs. current ' + Math.round(cur).toLocaleString() + ' hrs — potential savings of ' + Math.round(Math.abs(gap)).toLocaleString() + ' hrs/week.';
+    dSub.textContent = '→ Schedule ' + nursesNew + ' nurses × 36 hrs = ' + Math.round(nw).toLocaleString() + ' hrs/week at ' + activeT.ratio + ' vet:staff ratio.';
   } else {
     // Truly aligned
     banner.style.display = 'block';
@@ -506,9 +733,9 @@ function calc() {
     dLabel.style.color = '#14532D';
     dLabel.textContent = 'RESULT — MODELS ALIGNED';
     dHead.style.color = '#14532D';
-    dHead.textContent = 'New model agrees with current allocation';
+    dHead.textContent = 'Both models call for ' + nursesNew + ' nurses (' + Math.round(nw).toLocaleString() + ' hrs/week) — no staffing gap';
     dSub.style.color = '#16A34A';
-    dSub.textContent = 'Schedule ' + Math.round(nw).toLocaleString() + ' hrs. No staffing gap detected.';
+    dSub.textContent = '→ Keep ' + nursesNew + ' nurses at ' + activeT.ratio + ' vet:staff ratio. No change needed.';
   }
 
   var mx = Math.max(cur, nw, 1);
@@ -517,33 +744,25 @@ function calc() {
   bg.style.width = (Math.abs(gap)/mx*100).toFixed(1)+'%';
   bg.className = gap >= 0 ? 'bar-pos' : 'bar-neg';
 
-  // Acuity score: (Inpatient×11.4 + Surgery×13.2) ÷ Raw Acuity Hours
-  var acuityNumer = c + b;  // ip*11.4 + sx*13.2
-  var score = raw > 0 ? acuityNumer / raw : 0;
-
-  document.getElementById('score-big').textContent = has ? score.toFixed(5) : '—';
+  document.getElementById('score-big').textContent = has ? (score * 100).toFixed(1) + '%' : '—';
   // Bar scaled to max realistic score of ~0.78 from data
   document.getElementById('sbar').style.width = has ? Math.min(score / 0.78 * 100, 100).toFixed(1)+'%' : '0%';
 
   // Update formula box with live numbers
   if (has) {
     document.getElementById('score-formula-box').innerHTML =
-      'Raw Acuity Hours = ('+op+'×3.48) + ('+sx+'×13.2) + ('+ip+'×11.4) = <span>'+raw.toFixed(2)+'</span><br>' +
-      'Score = ('+ip+'×11.4 + '+sx+'×13.2) ÷ '+raw.toFixed(2)+' = <span>'+score.toFixed(5)+'</span>';
+      'Raw Acuity Hours = ('+op+'×3.48) + ('+sx+'×13.2) + ('+ip+'×11.4) = <span>'+raw.toFixed(1)+'</span><br>' +
+      'Acuity Score = ('+ip+'×11.4 + '+sx+'×13.2) ÷ '+raw.toFixed(1)+' = <span>'+(score*100).toFixed(1)+'%</span>';
   } else {
     document.getElementById('score-formula-box').innerHTML =
       'Score = (Inpatient × 11.4 + Surgery × 13.2) ÷ Raw Acuity Hours<br>' +
       'Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)';
   }
 
-  // Assign ratio tier + translated range label
-  var activeT = RATIO_TIERS[RATIO_TIERS.length - 1];
+  // Assign ratio tier display
   if (has) {
-    for (var i = 0; i < RATIO_TIERS.length; i++) {
-      if (score < RATIO_TIERS[i].max) { activeT = RATIO_TIERS[i]; break; }
-    }
     document.getElementById('tier-big').textContent  = activeT.label;
-    document.getElementById('ratio-big').textContent = 'Vet : Support Staff = ' + activeT.ratio;
+    document.getElementById('ratio-big').textContent = activeT.ratio + ' (Veterinarian : Support Staff)';
     var rangeLabel;
     if      (score < 0.285)                        rangeLabel = 'Below 40%';
     else if (score >= 0.285 && score < 0.325)      rangeLabel = '40% \u2013 60%';
@@ -553,7 +772,7 @@ function calc() {
     document.getElementById('score-range').textContent = rangeLabel;
   } else {
     document.getElementById('tier-big').textContent  = '\u2014';
-    document.getElementById('ratio-big').textContent = 'Vet : Support Staff';
+    document.getElementById('ratio-big').textContent = 'Veterinarian : Support Staff';
     document.getElementById('score-range').textContent = '\u2014';
   }
   RATIO_TIERS.forEach(function(t) {
@@ -567,6 +786,14 @@ function calc() {
   document.getElementById('dsn').textContent = has ? b.toFixed(0)+' hrs' : '—';
   document.getElementById('dic').textContent = has ? (ip/Math.max(tot,1)*Math.round(curRaw)).toFixed(0)+' hrs' : '—';
   document.getElementById('din').textContent = has ? c.toFixed(0)+' hrs' : '—';
+}
+
+function showScenario(id, btn) {
+  ['understaffed','baseline','aligned'].forEach(function(s) {
+    document.getElementById('sc-'+s).classList.toggle('hidden', s !== id);
+  });
+  document.querySelectorAll('.stab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
 }
 
 function resetAll() {
