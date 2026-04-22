@@ -133,35 +133,37 @@
   .brow .bn { font-size: 10px; color: var(--muted); }
   .brow .bv { font-size: 13px; font-weight: 700; color: #888; }
   .brow .bv.red { color: var(--red); }
-  /* Scenario walkthrough blocks */
-  .scenario-tabs { display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap; }
-  .stab { font-size:12px; font-weight:600; padding:8px 18px; border-radius:99px; border:1.5px solid var(--border); background:var(--white); color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .2s; }
-  .stab:hover { border-color:#BBB; color:var(--text); }
-  .stab.active { background:var(--text); border-color:var(--text); color:#fff; }
-  .scenario-block { background:var(--white); border-radius:14px; border:1.5px solid var(--border); overflow:hidden; margin-bottom:1.25rem; }
-  .scenario-block.hidden { display:none; }
-  .sc-intro { padding:1rem 1.4rem; border-bottom:1px solid #F0F0F0; }
-  .sc-badge { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 12px; border-radius:99px; margin-bottom:6px; }
-  .sc-badge.red   { background:#FEE2E2; color:#991B1B; }
-  .sc-badge.amber { background:#FEF3C7; color:#92400E; }
-  .sc-badge.green { background:#DCFCE7; color:#14532D; }
-  .sc-desc { font-size:13px; color:var(--muted); }
-  .sc-steps { padding:1rem 1.4rem; display:flex; flex-direction:column; gap:0; }
-  .sc-step { display:grid; grid-template-columns:28px 1fr; gap:0 14px; padding:.8rem 0; border-bottom:1px solid #F5F5F5; }
-  .sc-step:last-child { border-bottom:none; }
-  .sc-step-num { width:28px; height:28px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
-  .sc-step-body { display:flex; flex-direction:column; gap:6px; }
-  .sc-step-title { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
-  .sc-rows { display:flex; flex-direction:column; gap:3px; }
-  .sc-row { display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:13px; color:var(--text); }
-  .sc-row .op { color:var(--muted); font-size:11px; }
-  .sc-row.sum { border-top:1.5px solid #EBEBEB; margin-top:3px; padding-top:5px; font-weight:700; }
-  .sc-row.note { font-size:12px; color:var(--muted); margin-top:1px; }
-  .sc-row.note span { font-style:italic; }
-  .scv { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:#555; white-space:nowrap; }
-  .scv.red   { color:#CC0000; }
-  .scv.amber { color:#D97706; }
-  .scv.green { color:#16A34A; }
+  /* How-to instruction card */
+  .how-to-card { background:var(--white); border-radius:14px; border:1.5px solid var(--border); padding:1.3rem 1.4rem; margin-bottom:1.25rem; }
+  .how-to-title { font-size:9px; font-weight:700; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:.9rem; }
+  .how-to-steps { display:flex; flex-direction:column; gap:.55rem; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid #F0F0F0; }
+  .how-to-step { display:flex; align-items:flex-start; gap:12px; font-size:13px; color:var(--text); }
+  .how-to-num { width:22px; height:22px; border-radius:50%; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .how-to-outcomes { display:flex; flex-direction:column; gap:.55rem; }
+  .how-to-outcome { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text); }
+  .outcome-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+  .outcome-dot.red   { background:#CC0000; }
+  .outcome-dot.amber { background:#D97706; }
+  .outcome-dot.green { background:#16A34A; }
+
+  /* Live math toggle */
+  .math-toggle-btn { width:100%; text-align:left; background:var(--white); border:1.5px solid var(--border); border-radius:14px; padding:.9rem 1.2rem; font-size:13px; font-weight:600; color:var(--text); cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:8px; transition:border-color .15s; }
+  .math-toggle-btn:hover { border-color:#BBB; }
+  .math-toggle-btn.open { border-radius:14px 14px 0 0; border-bottom-color:transparent; }
+  .math-panel { background:var(--white); border:1.5px solid var(--border); border-top:none; border-radius:0 0 14px 14px; padding:1rem 1.4rem; }
+  .math-step { display:grid; grid-template-columns:26px 1fr; gap:0 12px; padding:.75rem 0; border-bottom:1px solid #F5F5F5; }
+  .math-step:last-child { border-bottom:none; }
+  .math-step-num { width:26px; height:26px; border-radius:50%; background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .math-step-body { display:flex; flex-direction:column; gap:5px; }
+  .math-step-title { font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+  .math-rows { display:flex; flex-direction:column; gap:3px; }
+  .math-row { display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:13px; color:var(--text); }
+  .math-row .math-op { color:var(--muted); font-size:11px; }
+  .math-row.sum { border-top:1.5px solid #EBEBEB; margin-top:3px; padding-top:4px; font-weight:700; }
+  .math-row.note { font-size:12px; color:var(--muted); font-style:italic; }
+  .mathv { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:#555; white-space:nowrap; }
+  .mathv.hi { color:var(--red); font-size:14px; }
+  .mathv.green { color:#16A34A; }
 
   .bottom-bar { height: 4px; background: var(--red); border-radius: 3px; margin-top: 2.5rem; }
 </style>
@@ -264,6 +266,61 @@
   </div>
 
   <div class="section-lbl">Acuity score & staffing ratio</div>
+
+  <!-- LIVE MATH TOGGLE — only visible when inputs are entered -->
+  <div id="math-toggle-wrap" style="display:none; margin-bottom:1.25rem;">
+    <button class="math-toggle-btn" onclick="toggleMath()" id="math-toggle-btn">
+      <span id="math-toggle-icon">▶</span> Show the math
+    </button>
+    <div class="math-panel" id="math-panel" style="display:none;">
+      <div class="math-step">
+        <div class="math-step-num">1</div>
+        <div class="math-step-body">
+          <div class="math-step-title">Multiply each case type by its clinical hours</div>
+          <div class="math-rows">
+            <div class="math-row"><span>Outpatient <span class="math-op">×</span> <strong>3.48 hrs</strong></span><span class="mathv" id="m1-op">—</span></div>
+            <div class="math-row"><span>Surgery <span class="math-op">×</span> <strong>13.2 hrs</strong></span><span class="mathv" id="m1-sx">—</span></div>
+            <div class="math-row"><span>Inpatient <span class="math-op">×</span> <strong>11.4 hrs</strong></span><span class="mathv" id="m1-ip">—</span></div>
+            <div class="math-row sum"><span>Total acuity-weighted hours</span><span class="mathv hi" id="m1-total">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="math-step">
+        <div class="math-step-num">2</div>
+        <div class="math-step-body">
+          <div class="math-step-title">Compare to what the current model allocates</div>
+          <div class="math-rows">
+            <div class="math-row"><span>Current model <span class="math-op">(total cases × 4.5)</span></span><span class="mathv" id="m2-cur">—</span></div>
+            <div class="math-row"><span>AWC model <span class="math-op">(acuity-weighted)</span></span><span class="mathv" id="m2-new">—</span></div>
+            <div class="math-row sum"><span>Staffing gap</span><span class="mathv hi" id="m2-gap">—</span></div>
+            <div class="math-row note" id="m2-nurse-row"><span id="m2-nurses">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="math-step">
+        <div class="math-step-num">3</div>
+        <div class="math-step-body">
+          <div class="math-step-title">Calculate acuity score — how complex is this week's caseload?</div>
+          <div class="math-rows">
+            <div class="math-row"><span>High-intensity hours <span class="math-op">(inpatient + surgery)</span></span><span class="mathv" id="m3-numer">—</span></div>
+            <div class="math-row"><span><span class="math-op">÷</span> Total acuity-weighted hours</span><span class="mathv" id="m3-denom">—</span></div>
+            <div class="math-row sum"><span>Acuity score</span><span class="mathv hi" id="m3-score">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="math-step">
+        <div class="math-step-num">4</div>
+        <div class="math-step-body">
+          <div class="math-step-title">Map score to staffing ratio</div>
+          <div class="math-rows">
+            <div class="math-row"><span>Acuity score falls in</span><span class="mathv" id="m4-range">—</span></div>
+            <div class="math-row"><span>Acuity tier</span><span class="mathv" id="m4-tier">—</span></div>
+            <div class="math-row sum"><span>Recommended staffing ratio</span><span class="mathv hi" id="m4-ratio">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="score-card">
     <div class="score-inner">
       <div>
@@ -319,179 +376,35 @@
     </div>
   </div>
 
-  <div class="section-lbl">How the model works — scenario walkthrough</div>
-
-  <!-- Scenario tabs -->
-  <div class="scenario-tabs">
-    <button class="stab active" onclick="showScenario('understaffed', this)">🔴 Understaffed</button>
-    <button class="stab" onclick="showScenario('baseline', this)">🟡 Baseline Floor</button>
-    <button class="stab" onclick="showScenario('aligned', this)">🟢 Models Align</button>
-  </div>
-
-  <!-- Scenario: Understaffed -->
-  <div class="scenario-block" id="sc-understaffed">
-    <div class="sc-intro">
-      <div class="sc-badge red">High inpatient load — current model falls short</div>
-      <div class="sc-desc">237 outpatient · 14 surgery · 69 inpatient — a heavy inpatient week that the volume model can't see</div>
-    </div>
-    <div class="sc-steps">
-      <div class="sc-step">
-        <div class="sc-step-num">1</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Multiply each case type by its clinical hours</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>237 outpatient <strong>× 3.48 hrs</strong></span><span class="scv">= 824.8 hrs</span></div>
-            <div class="sc-row"><span>14 surgery <strong>× 13.2 hrs</strong></span><span class="scv">= 184.8 hrs</span></div>
-            <div class="sc-row"><span>69 inpatient <strong>× 11.4 hrs</strong></span><span class="scv">= 786.6 hrs</span></div>
-            <div class="sc-row sum"><span>Total acuity-weighted hours</span><span class="scv red">1,796.2 hrs</span></div>
-          </div>
-        </div>
+  <!-- HOW TO USE instruction block -->
+  <div class="how-to-card">
+    <div class="how-to-title">How to use this calculator</div>
+    <div class="how-to-steps">
+      <div class="how-to-step">
+        <div class="how-to-num">1</div>
+        <div><strong>Select a hospital</strong> — loads its tier and baseline floor hours</div>
       </div>
-      <div class="sc-step">
-        <div class="sc-step-num">2</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Compare to what the current model allocates</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>Current model <span class="op">(320 cases × 4.5)</span></span><span class="scv">1,440 hrs</span></div>
-            <div class="sc-row"><span>AWC model <span class="op">(acuity-weighted)</span></span><span class="scv">1,796 hrs</span></div>
-            <div class="sc-row sum"><span>Gap — current model misses</span><span class="scv red">+356 hrs</span></div>
-            <div class="sc-row note"><span>→ Add <strong>10 nurses</strong> (from 40 → 50) to cover actual demand</span></div>
-          </div>
-        </div>
+      <div class="how-to-step">
+        <div class="how-to-num">2</div>
+        <div><strong>Enter weekly case numbers</strong> — outpatient, surgery, and inpatient separately</div>
       </div>
-      <div class="sc-step">
-        <div class="sc-step-num">3</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Calculate acuity score</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>High-intensity hrs <span class="op">(inpatient + surgery)</span></span><span class="scv">971.4 hrs</span></div>
-            <div class="sc-row"><span>÷ Total acuity-weighted hrs</span><span class="scv">1,796.2 hrs</span></div>
-            <div class="sc-row sum"><span>Acuity score</span><span class="scv red">54.1%</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="sc-step">
-        <div class="sc-step-num">4</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Map score to staffing ratio</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>54.1% falls in</span><span class="scv">40% – 60% percentile</span></div>
-            <div class="sc-row"><span>Acuity tier</span><span class="scv">Low–Mid</span></div>
-            <div class="sc-row sum"><span>→ Recommended ratio</span><span class="scv red">1 Vet : 2.7 Staff</span></div>
-          </div>
-        </div>
+      <div class="how-to-step">
+        <div class="how-to-num">3</div>
+        <div><strong>Read the result banner</strong> — it tells you exactly how many nurses to add, remove, or keep</div>
       </div>
     </div>
-  </div>
-
-  <!-- Scenario: Baseline Floor -->
-  <div class="scenario-block hidden" id="sc-baseline">
-    <div class="sc-intro">
-      <div class="sc-badge amber">Low volume week — baseline floor protects minimum staffing</div>
-      <div class="sc-desc">161 outpatient · 1 surgery · 20 inpatient — a quiet week where the acuity formula falls below the tier minimum</div>
-    </div>
-    <div class="sc-steps">
-      <div class="sc-step">
-        <div class="sc-step-num">1</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Multiply each case type by its clinical hours</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>161 outpatient <strong>× 3.48 hrs</strong></span><span class="scv">= 560.3 hrs</span></div>
-            <div class="sc-row"><span>1 surgery <strong>× 13.2 hrs</strong></span><span class="scv">= 13.2 hrs</span></div>
-            <div class="sc-row"><span>20 inpatient <strong>× 11.4 hrs</strong></span><span class="scv">= 228.0 hrs</span></div>
-            <div class="sc-row sum"><span>Total acuity-weighted hours</span><span class="scv amber">801.5 hrs</span></div>
-          </div>
-        </div>
+    <div class="how-to-outcomes">
+      <div class="how-to-outcome red">
+        <div class="outcome-dot red"></div>
+        <div><strong>Red —</strong> Current model understaffs. AWC adds nurses to match actual case complexity.</div>
       </div>
-      <div class="sc-step">
-        <div class="sc-step-num">2</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Check against tier baseline floor</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>AWC formula result</span><span class="scv">801.5 hrs</span></div>
-            <div class="sc-row"><span>Tier baseline minimum</span><span class="scv">868 hrs</span></div>
-            <div class="sc-row sum"><span>Formula below baseline → take baseline</span><span class="scv amber">868 hrs scheduled</span></div>
-            <div class="sc-row note"><span>→ Keep <strong>25 nurses</strong> — protects staff during slow weeks</span></div>
-          </div>
-        </div>
+      <div class="how-to-outcome amber">
+        <div class="outcome-dot amber"></div>
+        <div><strong>Amber —</strong> Low volume week. Acuity formula is below baseline, so the floor kicks in to protect minimum staffing.</div>
       </div>
-      <div class="sc-step">
-        <div class="sc-step-num">3</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Calculate acuity score</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>High-intensity hrs <span class="op">(inpatient + surgery)</span></span><span class="scv">241.2 hrs</span></div>
-            <div class="sc-row"><span>÷ Total acuity-weighted hrs</span><span class="scv">801.5 hrs</span></div>
-            <div class="sc-row sum"><span>Acuity score</span><span class="scv amber">30.1%</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="sc-step">
-        <div class="sc-step-num">4</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Map score to staffing ratio</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>30.1% falls in</span><span class="scv">Below 40% percentile</span></div>
-            <div class="sc-row"><span>Acuity tier</span><span class="scv">Low</span></div>
-            <div class="sc-row sum"><span>→ Recommended ratio</span><span class="scv amber">1 Vet : 2 Staff</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scenario: Models Align -->
-  <div class="scenario-block hidden" id="sc-aligned">
-    <div class="sc-intro">
-      <div class="sc-badge green">Typical week — both models agree</div>
-      <div class="sc-desc">200 outpatient · 5 surgery · 25 inpatient — a balanced mix where the current model happens to get it right</div>
-    </div>
-    <div class="sc-steps">
-      <div class="sc-step">
-        <div class="sc-step-num">1</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Multiply each case type by its clinical hours</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>200 outpatient <strong>× 3.48 hrs</strong></span><span class="scv">= 696.0 hrs</span></div>
-            <div class="sc-row"><span>5 surgery <strong>× 13.2 hrs</strong></span><span class="scv">= 66.0 hrs</span></div>
-            <div class="sc-row"><span>25 inpatient <strong>× 11.4 hrs</strong></span><span class="scv">= 285.0 hrs</span></div>
-            <div class="sc-row sum"><span>Total acuity-weighted hours</span><span class="scv green">1,047.0 hrs</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="sc-step">
-        <div class="sc-step-num">2</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Compare to what the current model allocates</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>Current model <span class="op">(230 cases × 4.5)</span></span><span class="scv">1,035 hrs</span></div>
-            <div class="sc-row"><span>AWC model <span class="op">(acuity-weighted)</span></span><span class="scv">1,047 hrs</span></div>
-            <div class="sc-row sum"><span>Gap — models essentially agree</span><span class="scv green">+12 hrs (≈ 0%)</span></div>
-            <div class="sc-row note"><span>→ <strong>29 nurses</strong> — no adjustment needed this week</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="sc-step">
-        <div class="sc-step-num">3</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Calculate acuity score</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>High-intensity hrs <span class="op">(inpatient + surgery)</span></span><span class="scv">351.0 hrs</span></div>
-            <div class="sc-row"><span>÷ Total acuity-weighted hrs</span><span class="scv">1,047.0 hrs</span></div>
-            <div class="sc-row sum"><span>Acuity score</span><span class="scv green">33.5%</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="sc-step">
-        <div class="sc-step-num">4</div>
-        <div class="sc-step-body">
-          <div class="sc-step-title">Map score to staffing ratio</div>
-          <div class="sc-rows">
-            <div class="sc-row"><span>33.5% falls in</span><span class="scv">Below 40% percentile</span></div>
-            <div class="sc-row"><span>Acuity tier</span><span class="scv">Low</span></div>
-            <div class="sc-row sum"><span>→ Recommended ratio</span><span class="scv green">1 Vet : 2 Staff</span></div>
-          </div>
-        </div>
+      <div class="how-to-outcome green">
+        <div class="outcome-dot green"></div>
+        <div><strong>Green —</strong> Models align. Case complexity matches what volume predicts — no staffing change needed.</div>
       </div>
     </div>
   </div>
@@ -759,6 +672,44 @@ function calc() {
       'Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)';
   }
 
+  // Show/hide math toggle and populate live values
+  document.getElementById('math-toggle-wrap').style.display = has ? 'block' : 'none';
+  if (has) {
+    var acuityNum = c + b;
+    // Step 1
+    document.getElementById('m1-op').textContent    = op + ' × 3.48 = ' + a.toFixed(1) + ' hrs';
+    document.getElementById('m1-sx').textContent    = sx + ' × 13.2 = ' + b.toFixed(1) + ' hrs';
+    document.getElementById('m1-ip').textContent    = ip + ' × 11.4 = ' + c.toFixed(1) + ' hrs';
+    document.getElementById('m1-total').textContent = raw.toFixed(1) + ' hrs';
+    // Step 2
+    document.getElementById('m2-cur').textContent = Math.round(cur).toLocaleString() + ' hrs';
+    document.getElementById('m2-new').textContent = Math.round(nw).toLocaleString() + ' hrs';
+    var m2gap = document.getElementById('m2-gap');
+    var gapAbs = Math.abs(Math.round(gap));
+    m2gap.textContent  = gap > 0.5  ? '+' + gapAbs.toLocaleString() + ' hrs (understaffed)' :
+                         gap < -0.5 ? '−' + gapAbs.toLocaleString() + ' hrs (reallocatable)' : '0 hrs (models align)';
+    m2gap.className    = 'mathv hi' + (gap < -0.5 ? ' green' : '');
+    var nc = Math.ceil(cur/36), nn = Math.ceil(nw/36), nd = nn - nc;
+    document.getElementById('m2-nurses').textContent =
+      nd > 0 ? '→ Add ' + nd + ' nurse' + (nd!==1?'s':'') + ' (' + nc + ' → ' + nn + ')' :
+      nd < 0 ? '→ ' + Math.abs(nd) + ' nurse' + (Math.abs(nd)!==1?'s':'') + ' can be reallocated (' + nc + ' → ' + nn + ')' :
+               '→ No nurse count change needed (' + nn + ' nurses)';
+    // Step 3
+    document.getElementById('m3-numer').textContent = acuityNum.toFixed(1) + ' hrs';
+    document.getElementById('m3-denom').textContent = raw.toFixed(1) + ' hrs';
+    document.getElementById('m3-score').textContent = (score * 100).toFixed(1) + '%';
+    // Step 4
+    var rl;
+    if      (score < 0.285)                   rl = 'Below 40% percentile';
+    else if (score >= 0.285 && score < 0.325) rl = '40% – 60% percentile';
+    else if (score >= 0.325 && score < 0.347) rl = '60% – 70% percentile';
+    else if (score >= 0.347 && score < 0.373) rl = '70% – 80% percentile';
+    else                                       rl = 'Above 80% percentile';
+    document.getElementById('m4-range').textContent = rl;
+    document.getElementById('m4-tier').textContent  = activeT.label + ' acuity';
+    document.getElementById('m4-ratio').textContent = activeT.ratio;
+  }
+
   // Assign ratio tier display
   if (has) {
     document.getElementById('tier-big').textContent  = activeT.label;
@@ -788,12 +739,15 @@ function calc() {
   document.getElementById('din').textContent = has ? c.toFixed(0)+' hrs' : '—';
 }
 
-function showScenario(id, btn) {
-  ['understaffed','baseline','aligned'].forEach(function(s) {
-    document.getElementById('sc-'+s).classList.toggle('hidden', s !== id);
-  });
-  document.querySelectorAll('.stab').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
+function toggleMath() {
+  var panel = document.getElementById('math-panel');
+  var btn   = document.getElementById('math-toggle-btn');
+  var icon  = document.getElementById('math-toggle-icon');
+  var open  = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  btn.classList.toggle('open', open);
+  icon.textContent = open ? '▼' : '▶';
+  btn.childNodes[1].nodeValue = open ? ' Hide the math' : ' Show the math';
 }
 
 function resetAll() {
