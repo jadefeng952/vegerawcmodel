@@ -311,10 +311,10 @@
       <div class="math-step">
         <div class="math-step-num">4</div>
         <div class="math-step-body">
-          <div class="math-step-title">Map score to staffing ratio</div>
+          <div class="math-step-title">Translate score to acuity tier using 2025 VEG hospital cutoffs</div>
           <div class="math-rows">
-            <div class="math-row"><span>Acuity score falls in</span><span class="mathv" id="m4-range">—</span></div>
-            <div class="math-row"><span>Acuity tier</span><span class="mathv" id="m4-tier">—</span></div>
+            <div class="math-row"><span>Score vs. cutoff thresholds</span><span class="mathv" id="m4-range">—</span></div>
+            <div class="math-row"><span>Percentile rank → tier</span><span class="mathv" id="m4-tier">—</span></div>
             <div class="math-row sum"><span>Recommended staffing ratio</span><span class="mathv hi" id="m4-ratio">—</span></div>
           </div>
         </div>
@@ -325,9 +325,9 @@
     <div class="score-inner">
       <div>
         <div class="score-num" id="score-big">—</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">acuity score</div>
-        <div style="font-size:36px;font-weight:700;color:var(--red);margin-top:6px;font-family:'DM Mono',monospace;" id="score-range">—</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">translated range</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">acuity score (0 = all outpatient · 1 = all inpatient/surgery)</div>
+        <div style="font-size:28px;font-weight:700;color:var(--red);margin-top:6px;font-family:'DM Mono',monospace;" id="score-range">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">hospital percentile rank across 2025 VEG data</div>
       </div>
       <div class="score-right">
         <div class="score-right-lbl">Recommended ratio</div>
@@ -336,7 +336,7 @@
       </div>
     </div>
     <div class="sbar-track"><div class="sbar-fill" id="sbar" style="width:0%"></div></div>
-    <div class="sbar-labels"><span>0 — low acuity</span><span>1 — high acuity</span></div>
+    <div class="sbar-labels"><span>0 — all outpatient</span><span>1 — all inpatient/surgery</span></div>
     <div class="score-formula" id="score-formula-box">
       Score = (Inpatient × 11.4 + Surgery × 13.2) ÷ Raw Acuity Hours<br>
       Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)
@@ -347,31 +347,31 @@
     <div class="tier-block" id="t0">
       <div class="tname">Low</div>
       <div class="tpercentile">Below 40%</div>
-      <div class="trange">&lt; 28.5%</div>
+      <div class="trange">score &lt; 0.285</div>
       <div class="tratio">1 Vet : 2 Staff</div>
     </div>
     <div class="tier-block" id="t1">
       <div class="tname">Low–Mid</div>
       <div class="tpercentile">40% – 60%</div>
-      <div class="trange">28.5% – 32.5%</div>
+      <div class="trange">score 0.285 – 0.325</div>
       <div class="tratio">1 Vet : 2.7 Staff</div>
     </div>
     <div class="tier-block" id="t2">
       <div class="tname">Mid</div>
       <div class="tpercentile">60% – 70%</div>
-      <div class="trange">32.5% – 34.7%</div>
+      <div class="trange">score 0.325 – 0.347</div>
       <div class="tratio">1 Vet : 3 Staff</div>
     </div>
     <div class="tier-block" id="t3">
       <div class="tname">Mid–High</div>
       <div class="tpercentile">70% – 80%</div>
-      <div class="trange">34.7% – 37.3%</div>
+      <div class="trange">score 0.347 – 0.373</div>
       <div class="tratio">1 Vet : 4 Staff</div>
     </div>
     <div class="tier-block" id="t4">
       <div class="tname">Very High</div>
       <div class="tpercentile">Above 80%</div>
-      <div class="trange">&gt; 37.3%</div>
+      <div class="trange">score &gt; 0.373</div>
       <div class="tratio">1 Vet : 5 Staff</div>
     </div>
   </div>
@@ -657,19 +657,25 @@ function calc() {
   bg.style.width = (Math.abs(gap)/mx*100).toFixed(1)+'%';
   bg.className = gap >= 0 ? 'bar-pos' : 'bar-neg';
 
-  document.getElementById('score-big').textContent = has ? (score * 100).toFixed(1) + '%' : '—';
+  document.getElementById('score-big').textContent = has ? score.toFixed(4) : '—';
   // Bar scaled to max realistic score of ~0.78 from data
   document.getElementById('sbar').style.width = has ? Math.min(score / 0.78 * 100, 100).toFixed(1)+'%' : '0%';
 
-  // Update formula box with live numbers
+  // Update formula box with live numbers + translation explanation
   if (has) {
+    var cutoffLabel = score < 0.285  ? 'below 0.285 → Low tier' :
+                      score < 0.325  ? '0.285–0.325 → Low-Mid tier' :
+                      score < 0.347  ? '0.325–0.347 → Mid tier' :
+                      score < 0.373  ? '0.347–0.373 → Mid-High tier' : 'above 0.373 → Very High tier';
     document.getElementById('score-formula-box').innerHTML =
-      'Raw Acuity Hours = ('+op+'×3.48) + ('+sx+'×13.2) + ('+ip+'×11.4) = <span>'+raw.toFixed(1)+'</span><br>' +
-      'Acuity Score = ('+ip+'×11.4 + '+sx+'×13.2) ÷ '+raw.toFixed(1)+' = <span>'+(score*100).toFixed(1)+'%</span>';
+      'Raw Acuity Hours = ('+op+'×3.48) + ('+sx+'×13.2) + ('+ip+'×11.4) = <span>'+raw.toFixed(1)+' hrs</span><br>' +
+      'Acuity Score = ('+ip+'×11.4 + '+sx+'×13.2) ÷ '+raw.toFixed(1)+' = <span>'+score.toFixed(4)+'</span><br>' +
+      score.toFixed(4)+' is <span>'+cutoffLabel+'</span> (cutoffs from 100+ VEG hospitals, 2025)';
   } else {
     document.getElementById('score-formula-box').innerHTML =
       'Score = (Inpatient × 11.4 + Surgery × 13.2) ÷ Raw Acuity Hours<br>' +
-      'Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)';
+      'Raw Acuity Hours = (Outpatient × 3.48) + (Surgery × 13.2) + (Inpatient × 11.4)<br>' +
+      'Score cutoffs (from 2025 VEG data): &lt;0.285 Low · 0.285–0.325 Low-Mid · 0.325–0.347 Mid · 0.347–0.373 Mid-High · &gt;0.373 Very High';
   }
 
   // Show/hide math toggle and populate live values
@@ -694,19 +700,19 @@ function calc() {
       nd > 0 ? '→ Add ' + nd + ' nurse' + (nd!==1?'s':'') + ' (' + nc + ' → ' + nn + ')' :
       nd < 0 ? '→ ' + Math.abs(nd) + ' nurse' + (Math.abs(nd)!==1?'s':'') + ' can be reallocated (' + nc + ' → ' + nn + ')' :
                '→ No nurse count change needed (' + nn + ' nurses)';
-    // Step 3
+    // Step 3 — show raw ratio score
     document.getElementById('m3-numer').textContent = acuityNum.toFixed(1) + ' hrs';
     document.getElementById('m3-denom').textContent = raw.toFixed(1) + ' hrs';
-    document.getElementById('m3-score').textContent = (score * 100).toFixed(1) + '%';
-    // Step 4
-    var rl;
-    if      (score < 0.285)                   rl = 'Below 40% percentile';
-    else if (score >= 0.285 && score < 0.325) rl = '40% – 60% percentile';
-    else if (score >= 0.325 && score < 0.347) rl = '60% – 70% percentile';
-    else if (score >= 0.347 && score < 0.373) rl = '70% – 80% percentile';
-    else                                       rl = 'Above 80% percentile';
-    document.getElementById('m4-range').textContent = rl;
-    document.getElementById('m4-tier').textContent  = activeT.label + ' acuity';
+    document.getElementById('m3-score').textContent = score.toFixed(4);
+    // Step 4 — show score vs cutoff thresholds explicitly
+    var cutoffExplain, cutoffRange;
+    if      (score < 0.285)  { cutoffExplain = score.toFixed(4) + ' < 0.285';               cutoffRange = 'Below 40% of VEG hospitals'; }
+    else if (score < 0.325)  { cutoffExplain = '0.285 \u2264 ' + score.toFixed(4) + ' < 0.325'; cutoffRange = '40% \u2013 60% of VEG hospitals'; }
+    else if (score < 0.347)  { cutoffExplain = '0.325 \u2264 ' + score.toFixed(4) + ' < 0.347'; cutoffRange = '60% \u2013 70% of VEG hospitals'; }
+    else if (score < 0.373)  { cutoffExplain = '0.347 \u2264 ' + score.toFixed(4) + ' < 0.373'; cutoffRange = '70% \u2013 80% of VEG hospitals'; }
+    else                     { cutoffExplain = score.toFixed(4) + ' \u2265 0.373';               cutoffRange = 'Above 80% of VEG hospitals'; }
+    document.getElementById('m4-range').textContent = cutoffExplain;
+    document.getElementById('m4-tier').textContent  = cutoffRange + ' → ' + activeT.label + ' tier';
     document.getElementById('m4-ratio').textContent = activeT.ratio;
   }
 
@@ -715,11 +721,11 @@ function calc() {
     document.getElementById('tier-big').textContent  = activeT.label;
     document.getElementById('ratio-big').textContent = activeT.ratio + ' (Veterinarian : Support Staff)';
     var rangeLabel;
-    if      (score < 0.285)                        rangeLabel = 'Below 40%';
-    else if (score >= 0.285 && score < 0.325)      rangeLabel = '40% \u2013 60%';
-    else if (score >= 0.325 && score < 0.347)      rangeLabel = '60% \u2013 70%';
-    else if (score >= 0.347 && score < 0.373)      rangeLabel = '70% \u2013 80%';
-    else                                            rangeLabel = 'Above 80%';
+    if      (score < 0.285)  rangeLabel = 'Below 40%';
+    else if (score < 0.325)  rangeLabel = '40% \u2013 60%';
+    else if (score < 0.347)  rangeLabel = '60% \u2013 70%';
+    else if (score < 0.373)  rangeLabel = '70% \u2013 80%';
+    else                     rangeLabel = 'Above 80%';
     document.getElementById('score-range').textContent = rangeLabel;
   } else {
     document.getElementById('tier-big').textContent  = '\u2014';
