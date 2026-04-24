@@ -185,6 +185,38 @@
   <h1 class="page-title">Acuity Staffing Calculator</h1>
   <p class="page-sub">Select a hospital, enter weekly case volume, and see required staffing hours and the recommended vet : support staff ratio.</p>
 
+  <div class="how-to-card">
+    <div class="how-to-title">How to use this calculator</div>
+    <div class="how-to-steps">
+      <div class="how-to-step">
+        <div class="how-to-num">1</div>
+        <div><strong>Select a hospital</strong> — loads its tier and baseline floor hours</div>
+      </div>
+      <div class="how-to-step">
+        <div class="how-to-num">2</div>
+        <div><strong>Enter weekly case numbers</strong> — outpatient, surgery, and inpatient separately</div>
+      </div>
+      <div class="how-to-step">
+        <div class="how-to-num">3</div>
+        <div><strong>Read the result banner</strong> — it tells you exactly how many nurses to add, remove, or keep</div>
+      </div>
+    </div>
+    <div class="how-to-outcomes">
+      <div class="how-to-outcome red">
+        <div class="outcome-dot red"></div>
+        <div><strong>Red —</strong> Current model understaffs. AWC adds nurses to match actual case complexity.</div>
+      </div>
+      <div class="how-to-outcome amber">
+        <div class="outcome-dot amber"></div>
+        <div><strong>Amber —</strong> Low volume week. Acuity formula is below baseline, so the floor kicks in to protect minimum staffing.</div>
+      </div>
+      <div class="how-to-outcome green">
+        <div class="outcome-dot green"></div>
+        <div><strong>Green —</strong> Models align. Case complexity matches what volume predicts — no staffing change needed.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="hosp-row">
     <label>Hospital</label>
     <select id="hospSel" onchange="onHospChange()">
@@ -239,7 +271,29 @@
     </div>
   </div>
 
+
+  <div class="section-lbl">Hour breakdown by case type</div>
+  <div class="breakdown">
+    <div class="bbox">
+      <div class="blabel">Outpatient</div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="doc">—</span></div>
+      <div class="brow"><span class="bn">New (× 3.48)</span><span class="bv red" id="don">—</span></div>
+    </div>
+    <div class="bbox">
+      <div class="blabel">Surgery</div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dsc">—</span></div>
+      <div class="brow"><span class="bn">New (× 13.2)</span><span class="bv red" id="dsn">—</span></div>
+    </div>
+    <div class="bbox">
+      <div class="blabel">Inpatient</div>
+      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dic">—</span></div>
+      <div class="brow"><span class="bn">New (× 11.4)</span><span class="bv red" id="din">—</span></div>
+    </div>
+  </div>
+
+
   <!-- DECISION BANNER -->
+  <div class="section-lbl">Results</div>
   <div id="decision-banner" style="display:none; border-radius:14px; padding:1.2rem 1.5rem; margin-bottom:1.25rem; border:2px solid; transition: all 0.3s;">
     <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" id="decision-label">—</div>
     <div style="font-size:22px;font-weight:700;margin-bottom:4px;" id="decision-headline">—</div>
@@ -377,56 +431,6 @@
   </div>
 
   <!-- HOW TO USE instruction block -->
-  <div class="how-to-card">
-    <div class="how-to-title">How to use this calculator</div>
-    <div class="how-to-steps">
-      <div class="how-to-step">
-        <div class="how-to-num">1</div>
-        <div><strong>Select a hospital</strong> — loads its tier and baseline floor hours</div>
-      </div>
-      <div class="how-to-step">
-        <div class="how-to-num">2</div>
-        <div><strong>Enter weekly case numbers</strong> — outpatient, surgery, and inpatient separately</div>
-      </div>
-      <div class="how-to-step">
-        <div class="how-to-num">3</div>
-        <div><strong>Read the result banner</strong> — it tells you exactly how many nurses to add, remove, or keep</div>
-      </div>
-    </div>
-    <div class="how-to-outcomes">
-      <div class="how-to-outcome red">
-        <div class="outcome-dot red"></div>
-        <div><strong>Red —</strong> Current model understaffs. AWC adds nurses to match actual case complexity.</div>
-      </div>
-      <div class="how-to-outcome amber">
-        <div class="outcome-dot amber"></div>
-        <div><strong>Amber —</strong> Low volume week. Acuity formula is below baseline, so the floor kicks in to protect minimum staffing.</div>
-      </div>
-      <div class="how-to-outcome green">
-        <div class="outcome-dot green"></div>
-        <div><strong>Green —</strong> Models align. Case complexity matches what volume predicts — no staffing change needed.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-lbl">Hour breakdown by case type</div>
-  <div class="breakdown">
-    <div class="bbox">
-      <div class="blabel">Outpatient</div>
-      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="doc">—</span></div>
-      <div class="brow"><span class="bn">New (× 3.48)</span><span class="bv red" id="don">—</span></div>
-    </div>
-    <div class="bbox">
-      <div class="blabel">Surgery</div>
-      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dsc">—</span></div>
-      <div class="brow"><span class="bn">New (× 13.2)</span><span class="bv red" id="dsn">—</span></div>
-    </div>
-    <div class="bbox">
-      <div class="blabel">Inpatient</div>
-      <div class="brow"><span class="bn">Current (share of total)</span><span class="bv" id="dic">—</span></div>
-      <div class="brow"><span class="bn">New (× 11.4)</span><span class="bv red" id="din">—</span></div>
-    </div>
-  </div>
 
   <div class="bottom-bar"></div>
 </div>
